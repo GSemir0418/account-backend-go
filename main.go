@@ -7,5 +7,5 @@ import "account/cmd"
 // c "account/cmd"
 
 func main() {
-	cmd.RunServer()
+	cmd.Run()
 }
