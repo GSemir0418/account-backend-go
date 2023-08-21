@@ -24,7 +24,7 @@ func Run() {
 	createCmd := &cobra.Command{
 		Use: "create",
 		Run: func(cmd *cobra.Command, args []string) {
-			database.PgCreateTables()
+			database.CreateTables()
 		},
 	}
 	mgrtCmd := &cobra.Command{
@@ -40,11 +40,11 @@ func Run() {
 		},
 	}
 
-	database.PgConnect()
+	database.Connect()
 	rootCmd.AddCommand(srvCmd, dbCmd)
 	dbCmd.AddCommand(createCmd, mgrtCmd, crudCmd)
 	// 会在当前函数执行结束后执行
-	defer database.PgClose()
+	defer database.Close()
 	rootCmd.Execute()
 }
 

@@ -87,3 +87,8 @@ go test -benchmem -bench "Crud" ./...
 
 执行了 2997 次，每次操作使用了 0.3ms，消耗 207KB 内存，开辟内存的次数 47 次
 1 ns 是 10^-9 s
+
+
+DROP TABLE users, items;
+
+SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_name='users';
