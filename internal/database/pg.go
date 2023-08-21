@@ -88,3 +88,42 @@ func Migrate() {
 
 	// 继续往下写同步的命令
 }
+
+func Crud() {
+	// 需要返回值用 Query，不需要就用 Exec
+	// 创建一个 user
+	_, err := DB.Exec(`INSERT INTO users (email) VALUES ('1@qq.com')`)
+	if err != nil {
+		log.Fatalln(err)
+	} else {
+		log.Println("Successfully create a user")
+	}
+
+	// 修改一个 user
+	_, err = DB.Exec(`Update users SET phone = 138123456789 where email = '1@qq.com'`)
+	if err != nil {
+		log.Println(err)
+	} else {
+		log.Println("Successfully update a user")
+	}
+
+	// 分页查询
+	// 预准备语句 psql使用 $1 $2 作为参数占位符 mysql 使用?占位
+	stmt, err := DB.Prepare("SELECT phone FROM users where email = $1 offset $2 limit $3")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	result, err := stmt.Query("1@qq.com", 0, 3)
+	if err != nil {
+		log.Println(err)
+	} else {
+		// 返回值是一个迭代器而不是数组，节省内存
+		for result.Next() {
+			var phone string
+			result.Scan(&phone)
+			log.Println("phone", phone)
+		}
+		log.Println("Successfully read users")
+	}
+
+}
