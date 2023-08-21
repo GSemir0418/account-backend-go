@@ -80,3 +80,10 @@ go build;./account db create
 
 清空数据表
 DELETE FROM users;
+
+go test -benchmem -bench "Crud" ./...
+
+2997	    367429 ns/op	    2073 B/op	      47 allocs/op
+
+执行了 2997 次，每次操作使用了 0.3ms，消耗 207KB 内存，开辟内存的次数 47 次
+1 ns 是 10^-9 s

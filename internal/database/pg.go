@@ -33,7 +33,6 @@ func PgConnect() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Successfully connected to db")
 }
 
 func PgClose() {
@@ -52,7 +51,6 @@ func PgCreateTables() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Successfully created user table")
 }
 
 func Migrate() {
@@ -63,7 +61,6 @@ func Migrate() {
 		// log.Fatal(err)
 		log.Println(err)
 	}
-	log.Println("Successfully add phone column to users table")
 
 	// 示例：新增 items 表
 	// 复用 err
@@ -76,7 +73,6 @@ func Migrate() {
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println("Successfully create items table")
 
 	// 示例：修改 created_at 字段类型为 WITHOUT TIME ZONE
 	_, err = DB.Exec(`ALTER TABLE items ALTER COLUMN created_at TYPE TIMESTAMP`)
@@ -85,15 +81,12 @@ func Migrate() {
 		// log.Fatal(err)
 		log.Println(err)
 	}
-	log.Println("Successfully change the type of created_at column")
 
 	// 继续往下写同步的命令
 	// 给 User 的 email 字段添加唯一索引
 	_, err = DB.Exec(`CREATE UNIQUE INDEX users_email_index ON users (email)`)
 	if err != nil {
-		log.Fatal(err)
-	} else {
-		log.Println("added unique index on users email")
+		log.Println(err)
 	}
 }
 
@@ -113,16 +106,12 @@ func Crud() {
 		default:
 			log.Println(x)
 		}
-	} else {
-		log.Println("Successfully create a user")
 	}
 
 	// 修改一个 user
 	_, err = DB.Exec(`Update users SET phone = 138123456789 where email = '1@qq.com'`)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("Successfully update a user")
 	}
 
 	// 分页查询
@@ -141,7 +130,6 @@ func Crud() {
 			result.Scan(&phone)
 			log.Println("phone", phone)
 		}
-		log.Println("Successfully read users")
 	}
 
 }
