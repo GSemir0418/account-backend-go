@@ -7,6 +7,7 @@ import (
 	"log"
 
 	// 引入pg的驱动，前面加_表示不直接访问这个包
+	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 )
 
@@ -87,14 +88,31 @@ func Migrate() {
 	log.Println("Successfully change the type of created_at column")
 
 	// 继续往下写同步的命令
+	// 给 User 的 email 字段添加唯一索引
+	_, err = DB.Exec(`CREATE UNIQUE INDEX users_email_index ON users (email)`)
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		log.Println("added unique index on users email")
+	}
 }
 
 func Crud() {
 	// 需要返回值用 Query，不需要就用 Exec
 	// 创建一个 user
 	_, err := DB.Exec(`INSERT INTO users (email) VALUES ('1@qq.com')`)
+	// 错误处理：细分错误的类型
 	if err != nil {
-		log.Fatalln(err)
+		// log.Fatalln(err)
+		switch x := err.(type) {
+		// 数据库错误
+		case *pq.Error:
+			pqError := err.(*pq.Error)
+			log.Println(pqError.Code.Name())
+			log.Println(pqError.Message)
+		default:
+			log.Println(x)
+		}
 	} else {
 		log.Println("Successfully create a user")
 	}

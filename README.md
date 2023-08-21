@@ -77,3 +77,6 @@ go build;./account server
 > https://devdocs.io/postgresql~14/sql-createtable
 
 go build;./account db create
+
+清空数据表
+DELETE FROM users;
