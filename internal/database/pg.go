@@ -53,3 +53,38 @@ func PgCreateTables() {
 	}
 	log.Println("Successfully created user table")
 }
+
+func Migrate() {
+	// 示例：给 users 表添加手机字段
+	_, err := DB.Exec(`ALTER TABLE users ADD COLUMN phone VARCHAR(50)`)
+	if err != nil {
+		// Fatal 会终止程序，影响后续命令
+		// log.Fatal(err)
+		log.Println(err)
+	}
+	log.Println("Successfully add phone column to users table")
+
+	// 示例：新增 items 表
+	// 复用 err
+	_, err = DB.Exec(`CREATE TABLE IF NOT EXISTS items (
+		id SERIAL PRIMARY KEY,
+		amount VARCHAR(100) NOT NULL,
+		created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	)`)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println("Successfully create items table")
+
+	// 示例：修改 created_at 字段类型为 WITHOUT TIME ZONE
+	_, err = DB.Exec(`ALTER TABLE items ALTER COLUMN created_at TYPE TIMESTAMP`)
+	if err != nil {
+		// Fatal 会终止程序，影响后续命令
+		// log.Fatal(err)
+		log.Println(err)
+	}
+	log.Println("Successfully change the type of created_at column")
+
+	// 继续往下写同步的命令
+}

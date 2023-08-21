@@ -27,11 +27,18 @@ func Run() {
 			database.PgCreateTables()
 		},
 	}
+	mgrtCmd := &cobra.Command{
+		Use: "migrate",
+		Run: func(cmd *cobra.Command, args []string) {
+			database.Migrate()
+		},
+	}
 
+	database.PgConnect()
 	rootCmd.AddCommand(srvCmd)
 	rootCmd.AddCommand(dbCmd)
 	dbCmd.AddCommand(createCmd)
-	database.PgConnect()
+	dbCmd.AddCommand(mgrtCmd)
 	// 会在当前函数执行结束后执行
 	defer database.PgClose()
 	rootCmd.Execute()
