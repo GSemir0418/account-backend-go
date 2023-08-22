@@ -88,10 +88,14 @@ go test -benchmem -bench "Crud" ./...
 执行了 2997 次，每次操作使用了 0.3ms，消耗 207KB 内存，开辟内存的次数 47 次
 1 ns 是 10^-9 s
 
-
+// 删除 table
 DROP TABLE users, items;
 
 // 查看表结构
 SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_name='users';
 // 查看索引
 SELECT tablename, indexname, indexdef FROM pg_indexes WHERE schemaname='public' ORDER BY tablename, indexname;
+
+1818	    607539 ns/op	   37587 B/op	     555 allocs/op
+
+gorm 典型的使用空间弥补时间
