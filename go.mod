@@ -1,10 +1,9 @@
 module account
 
-go 1.17
+go 1.21
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	github.com/lib/pq v1.10.9
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
 	gorm.io/driver/postgres v1.5.2

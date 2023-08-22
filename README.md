@@ -91,4 +91,7 @@ go test -benchmem -bench "Crud" ./...
 
 DROP TABLE users, items;
 
+// 查看表结构
 SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_name='users';
+// 查看索引
+SELECT tablename, indexname, indexdef FROM pg_indexes WHERE schemaname='public' ORDER BY tablename, indexname;
