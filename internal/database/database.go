@@ -77,4 +77,54 @@ func Migrate() {
 }
 
 func Crud() {
+	// 创建一个 User
+	user := User{Email: "test1@qq.com"}
+	// crud 的返回值都是一个事务
+	tx := DB.Create(&user)
+	log.Println(tx.RowsAffected)
+	// 不会将新user返回，而是直接修改 user 实例
+	log.Println(user)
+
+	// 查询
+	u2 := User{}
+	_ = DB.Find(&u2, 1)
+
+	// 更新
+	u2.Phone = "123456789"
+	tx = DB.Save(&u2)
+	if tx.Error != nil {
+		log.Println(tx.Error)
+	} else {
+		log.Println(tx.RowsAffected)
+		log.Println(u2)
+	}
+
+	// 分页排序查询
+	users := []User{}
+	// 指定表查询（不指定的话就查询Find中传入的结构体实例对应的表）
+	// DB.Model(&User{})
+	DB.Offset(0).Limit(10).Order("created_at asc, id desc").Find(&users)
+	log.Println(users)
+
+	// 删除
+	u := User{ID: 1}
+	tx = DB.Delete(&u)
+	if tx.Error != nil {
+		log.Println(tx.Error)
+	} else {
+		log.Println(tx.RowsAffected)
+	}
+
+	// 裸 sql 查询
+	tx = DB.Raw("SELECT * FROM users WHERE id = ?", 4).Scan(&u)
+	if tx.Error != nil {
+		log.Println(tx.Error)
+	} else {
+		log.Println(u)
+	}
+
+	// 本质上 orm 就是帮我们在写 sql 时分段
+	// 不同的orm所对应的api也不同，确实需要一定的学习成本，尤其是当需求比较复杂时，还不如手写sql
+	// 并不能够提供类型安全的保障，跟裸写sql大差不差
+	// gorm 类型安全插件 gen，官网有，可以酌情使用
 }
