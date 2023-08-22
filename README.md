@@ -99,3 +99,7 @@ SELECT tablename, indexname, indexdef FROM pg_indexes WHERE schemaname='public' 
 1818	    607539 ns/op	   37587 B/op	     555 allocs/op
 
 gorm 典型的使用空间弥补时间
+
+sqlc 是编译器，可以将 sql 编译为 Go，类型安全
+sqlc 不支持创建数据表以及数据迁移
+会解析 CREATE TABLE 及 ALTER TABLE 语句，生成 Go 的 struct
