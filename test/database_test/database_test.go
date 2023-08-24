@@ -8,7 +8,7 @@ import (
 // 以 BenchmarkXXX 命名
 func BenchmarkCrud(b *testing.B) {
 	database.Connect()
-	database.CreateTables()
+	// database.CreateTables()
 	database.Migrate()
 	defer database.Close()
 	// b.N 表示测试次数

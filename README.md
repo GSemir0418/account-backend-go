@@ -124,3 +124,9 @@ migrate create -ext sql -dir config/migrations -seq create_users_table
 运行迁移文件
 migrate -database "postgres://gsemir:gsemir@localhost:5432/go_account_dev?sslmode=disable" \
 -source "file://$(pwd)/config/migrations" up
+
+封装命令行
+记得把最后一个引入的 github 改为 file
+"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
