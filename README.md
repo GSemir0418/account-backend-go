@@ -112,3 +112,15 @@ sqlc 不支持创建数据表以及数据迁移
 > https://github.com/golang-migrate/migrate/tree/master/cmd/migrate
 > as lib
 > https://github.com/golang-migrate/migrate#use-in-your-go-project
+> get started
+> https://github.com/golang-migrate/migrate/blob/master/GETTING_STARTED.md
+
+安装
+go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+或 brew install golang-migrate
+创建迁移文件
+migrate create -ext sql -dir config/migrations -seq create_users_table
+
+运行迁移文件
+migrate -database "postgres://gsemir:gsemir@localhost:5432/go_account_dev?sslmode=disable" \
+-source "file://$(pwd)/config/migrations" up
