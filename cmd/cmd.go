@@ -21,16 +21,22 @@ func Run() {
 	dbCmd := &cobra.Command{
 		Use: "db",
 	}
-	createMgrCmd := &cobra.Command{
-		Use: "create:migration",
+	mgrCreateCmd := &cobra.Command{
+		Use: "migrate:create",
 		Run: func(cmd *cobra.Command, args []string) {
-			database.CreateMgr(args[0])
+			database.MigrateCreate(args[0])
 		},
 	}
-	mgrtCmd := &cobra.Command{
-		Use: "migrate",
+	mgrtUpCmd := &cobra.Command{
+		Use: "migrate:up",
 		Run: func(cmd *cobra.Command, args []string) {
-			database.Migrate()
+			database.MigrateUp()
+		},
+	}
+	mgrtDownCmd := &cobra.Command{
+		Use: "migrate:down",
+		Run: func(cmd *cobra.Command, args []string) {
+			database.MigrateDown()
 		},
 	}
 	crudCmd := &cobra.Command{
@@ -42,7 +48,7 @@ func Run() {
 
 	database.Connect()
 	rootCmd.AddCommand(srvCmd, dbCmd)
-	dbCmd.AddCommand(createMgrCmd, mgrtCmd, crudCmd)
+	dbCmd.AddCommand(mgrCreateCmd, mgrtDownCmd, mgrtUpCmd, crudCmd)
 	// 会在当前函数执行结束后执行
 	defer database.Close()
 	rootCmd.Execute()

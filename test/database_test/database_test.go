@@ -9,7 +9,7 @@ import (
 func BenchmarkCrud(b *testing.B) {
 	database.Connect()
 	// database.CreateTables()
-	database.Migrate()
+	// database.Migrate()
 	defer database.Close()
 	// b.N 表示测试次数
 	for i := 0; i < b.N; i++ {

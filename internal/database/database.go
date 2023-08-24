@@ -29,7 +29,7 @@ func Connect() {
 func Close() {
 }
 
-func CreateMgr(filename string) {
+func MigrateCreate(filename string) {
 	// migration 库没有提供创建迁移文件的方法
 	// 使用 go 执行语句即可，把命令拆成字符串
 	cmd := exec.Command("migrate", "create", "-ext", "sql", "-dir", "config/migrations", "-seq", filename)
@@ -39,7 +39,7 @@ func CreateMgr(filename string) {
 	}
 }
 
-func Migrate() {
+func MigrateUp() {
 	dir, err := os.Getwd()
 	if err != nil {
 		log.Fatalln(err)
@@ -60,5 +60,24 @@ func Migrate() {
 
 }
 
+func MigrateDown() {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	m, err := migrate.New(
+		fmt.Sprintf("file://%s/config/migrations", dir),
+		fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+			user, password, host, port, dbname,
+		),
+	)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = m.Steps(-1) // 默认只回退一步
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
 func Crud() {
 }

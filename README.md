@@ -130,3 +130,11 @@ migrate -database "postgres://gsemir:gsemir@localhost:5432/go_account_dev?sslmod
 "github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+
+
+创建迁移文件命令
+go build; ./account db migrate:create add_email_to_users 
+运行迁移文件命令
+go build; ./account db migrate:up
+回滚迁移命令
+go build; ./account db migrate:down
