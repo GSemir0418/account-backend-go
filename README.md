@@ -138,3 +138,6 @@ go build; ./account db migrate:create add_email_to_users
 go build; ./account db migrate:up
 回滚迁移命令
 go build; ./account db migrate:down
+
+记得手动同步 sqlc 的 schema.sql
+每新增一个sql语句就要重新执行 sql generate

@@ -1,9 +1,12 @@
 package database
 
 import (
+	queries "account/config/sqlc"
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"os/exec"
 
@@ -12,7 +15,11 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
+// 数据库全局变量
 var DB *sql.DB
+
+// 数据库上下文
+var DBCtx = context.Background()
 
 const (
 	host     = "localhost"
@@ -23,7 +30,16 @@ const (
 )
 
 func Connect() {
-	// dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	DB = db
+	err = db.Ping()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func Close() {
@@ -80,4 +96,35 @@ func MigrateDown() {
 	}
 }
 func Crud() {
+	// queries 来自 sqlc 自动生成的包
+	q := queries.New(DB)
+	// 随机数字，因为 email 字段是唯一的
+	id := rand.Int()
+
+	// 创建 User 返回 User 结构体实例
+	u, err := q.CreateUser(DBCtx, fmt.Sprintf("%d@qq.com", id))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println("Success create", u)
+
+	// 更新 User
+	err = q.UpdateUser(DBCtx, queries.UpdateUserParams{
+		ID:    u.ID,
+		Email: fmt.Sprintf("%d@qq.com", id),
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println("Success update")
+
+	// 查询 Users
+	users, err := q.ListUsers(DBCtx, queries.ListUsersParams{
+		Offset: 0,
+		Limit:  10,
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println("Success Query", users)
 }

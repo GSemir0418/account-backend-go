@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.20.0
 
-package tutorial
+package queries
 
 import (
 	"context"

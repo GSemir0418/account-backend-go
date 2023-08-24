@@ -47,10 +47,12 @@ func Run() {
 	}
 
 	database.Connect()
-	rootCmd.AddCommand(srvCmd, dbCmd)
-	dbCmd.AddCommand(mgrCreateCmd, mgrtDownCmd, mgrtUpCmd, crudCmd)
 	// 会在当前函数执行结束后执行
 	defer database.Close()
+
+	rootCmd.AddCommand(srvCmd, dbCmd)
+	dbCmd.AddCommand(mgrCreateCmd, mgrtDownCmd, mgrtUpCmd, crudCmd)
+
 	rootCmd.Execute()
 }
 
