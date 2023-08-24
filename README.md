@@ -100,6 +100,15 @@ SELECT tablename, indexname, indexdef FROM pg_indexes WHERE schemaname='public' 
 
 gorm 典型的使用空间弥补时间
 
+提供数据库建表语句(CREATE/ALTER TABLE)和查询语句，自动编译为 Go 的 struct 和 func
 sqlc 是编译器，可以将 sql 编译为 Go，类型安全
 sqlc 不支持创建数据表以及数据迁移
-会解析 CREATE TABLE 及 ALTER TABLE 语句，生成 Go 的 struct
+
+选型网站 star-history.com
+
+选择 golang-migrate 作为迁移工具
+> https://github.com/golang-migrate/migrate#cli-usage
+> as cli
+> https://github.com/golang-migrate/migrate/tree/master/cmd/migrate
+> as lib
+> https://github.com/golang-migrate/migrate#use-in-your-go-project
