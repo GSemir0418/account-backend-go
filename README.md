@@ -141,3 +141,17 @@ go build; ./account db migrate:down
 
 记得手动同步 sqlc 的 schema.sql
 每新增一个sql语句就要重新执行 sql generate
+
+go install 安装的是命令行工具
+默认安装路径是 $HOME/go/bin
+go get 安装的是项目依赖库
+
+使用 swaggo 生成API文档
+> https://github.com/swaggo/swag/blob/master/README_zh-CN.md
+
+通用注释写在 main 中
+router 加上 swagger 的 router
+controller 前加注释
+swag init
+go build; ./account server
+访问 http://localhost:8080/swagger/index.html
