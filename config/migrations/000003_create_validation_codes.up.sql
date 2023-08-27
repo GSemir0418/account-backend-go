@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS validation_codes (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) NOT NULL,
+  code VARCHAR(255) NOT NULL,
+  used_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP NOT NULL DEFAULT now()
+);

@@ -155,3 +155,28 @@ controller 前加注释
 swag init
 go build; ./account server
 访问 http://localhost:8080/swagger/index.html
+
+
+验证码 API
+
+1. 迁移数据库 建表
+2. 发送验证码的配置
+使用 gomail 库
+> https://github.com/go-gomail/gomail
+gomail 示例
+> https://pkg.go.dev/gopkg.in/gomail.v2#example-package
+
+3. 密钥管理 将邮箱授权码保存到环境变量
+
+.zshrc.local
+export EMAIL_SMTP_PWD='xxxxxx'
+source ~/.zshrc.local
+此时再执行发送命令即可h
+
+但当协同开发时设置环境变量会很繁琐
+有没有一个文件，里面有项目的密码配置，但不提交到 github 以保证安全性呢
+
+4. 使用 viper 密钥管理
+> Ruby 牛逼 一个 master.key 就可以解决了
+> viper
+> https://github.com/spf13/viper
