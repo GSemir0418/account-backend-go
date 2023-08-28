@@ -214,3 +214,6 @@ strings.NewReader(`{"email": "test@qq.com"}`)
  拆分 query.sql，按字段分类编写 sql 查询语句
 
 router 连接数据库
+
+为了方便测试 封装 CountValidationCodes 方法
+在测试环境下注意要先 router.New 连接数据库，然后再查询
