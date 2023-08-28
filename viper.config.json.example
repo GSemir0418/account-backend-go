@@ -1,0 +1,10 @@
+{
+  "email": {
+    "smtp": {
+      "host": "smtp.qq.com",
+      "port": 465,
+      "user": "845217811@qq.com",
+      "password": "xxxx"
+    }
+  }
+}

@@ -3,6 +3,7 @@ package cmd
 
 import (
 	"account/internal/database"
+	"account/internal/email"
 	"account/internal/router"
 
 	"github.com/spf13/cobra"
@@ -20,6 +21,12 @@ func Run() {
 	}
 	dbCmd := &cobra.Command{
 		Use: "db",
+	}
+	emailCmd := &cobra.Command{
+		Use: "email",
+		Run: func(cmd *cobra.Command, args []string) {
+			email.Send()
+		},
 	}
 	mgrCreateCmd := &cobra.Command{
 		Use: "migrate:create",
@@ -50,7 +57,7 @@ func Run() {
 	// 会在当前函数执行结束后执行
 	defer database.Close()
 
-	rootCmd.AddCommand(srvCmd, dbCmd)
+	rootCmd.AddCommand(srvCmd, dbCmd, emailCmd)
 	dbCmd.AddCommand(mgrCreateCmd, mgrtDownCmd, mgrtUpCmd, crudCmd)
 
 	rootCmd.Execute()

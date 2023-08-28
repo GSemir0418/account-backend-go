@@ -1,6 +1,11 @@
 package main
 
-import "account/cmd"
+import (
+	"account/cmd"
+	"log"
+
+	"github.com/spf13/viper"
+)
 
 // @title           记账
 // @description     记账应用接口文档
@@ -18,6 +23,14 @@ import "account/cmd"
 // @externalDocs.url          https://swagger.io/resources/open-api/
 
 func main() {
+	// 读取本地密钥
+	viper.AddConfigPath(".")
+	viper.SetConfigName("viper.config")
+	viper.SetConfigType("json")
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// 初始化命令行程序
 	cmd.Run()
 }

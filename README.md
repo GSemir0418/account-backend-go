@@ -171,12 +171,19 @@ gomail 示例
 .zshrc.local
 export EMAIL_SMTP_PWD='xxxxxx'
 source ~/.zshrc.local
-此时再执行发送命令即可h
+此时再执行发送命令即可
 
-但当协同开发时设置环境变量会很繁琐
+go 通过 os.Getenv("EMAIL_SMTP_PWD") 获取到密码即可
+
+但当协同开发时设置环境变量会很繁琐，且数据类型仅支持字符串，需要手动转换
 有没有一个文件，里面有项目的密码配置，但不提交到 github 以保证安全性呢
 
 4. 使用 viper 密钥管理
+  
 > Ruby 牛逼 一个 master.key 就可以解决了
 > viper
 > https://github.com/spf13/viper
+
+main里面设置配置文件路径并读取
+viper.config.json.example 可以提交
+viper.config.json 不能提交
