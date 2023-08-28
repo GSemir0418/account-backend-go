@@ -9,12 +9,15 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateValidationCode(t *testing.T) {
 	// 注意要先在 New 中连接数据库，然后再查询
 	r := router.New()
+	viper.Set("email.smtp.port", "1025")
+	viper.Set("email.smtp.host", "localhost")
 	q := database.NewQuery()
 	c := context.Background()
 	count1, _ := q.CountValidationCodes(c, "845217811@qq.com")
