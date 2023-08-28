@@ -128,3 +128,8 @@ func Crud() {
 	}
 	log.Println("Success Query", users)
 }
+
+// 获取 sqlc 的 query 实例
+func NewQuery() *queries.Queries {
+	return queries.New(DB)
+}

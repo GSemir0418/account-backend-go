@@ -5,12 +5,22 @@
 package queries
 
 import (
+	"database/sql"
 	"time"
 )
 
 type User struct {
 	ID        int32
 	Email     string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type ValidationCode struct {
+	ID        int32
+	Email     string
+	Code      string
+	UsedAt    sql.NullTime
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

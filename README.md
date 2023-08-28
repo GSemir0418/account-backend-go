@@ -206,3 +206,11 @@ strings.NewReader(`{"email": "test@qq.com"}`)
 所以将 viper 的配置文件统一存放到 $HOME/.account 项目目录下
 使用绝对路径读取配置文件即可
 封装Viper的读取逻辑 在 router 中引入
+
+用 sqlc 保存验证码到数据库
+其实使用redis做这个需求更合适
+
+对 sqlc 的配置进行调整 queries: "config/query.sql" => queries: "config/queries"
+ 拆分 query.sql，按字段分类编写 sql 查询语句
+
+router 连接数据库

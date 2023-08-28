@@ -1,6 +1,8 @@
 package controller
 
 import (
+	queries "account/config/sqlc"
+	"account/internal/database"
 	"account/internal/email"
 	"log"
 	"net/http"
@@ -18,20 +20,24 @@ import (
 // @Failure      500
 // @Router       /validation_codes [post]
 func CreateValidationCode(c *gin.Context) {
-	// 拿到 json 请求体，分三步
-	// 1. 声明结构体实例
 	var body struct {
 		Email string `json:"email"`
 	}
-	// 2. 将结构体实例绑定到上下文
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.String(400, "参数错误")
 		return
 	}
-	// 3. 此时结构体实例body就是请求体了
-	log.Println("--------------------")
-	log.Println(body.Email)
-	err := email.SendValidationCode(body.Email, "123456")
+	q := database.NewQuery()
+	vc, err := q.CreateValidationCode(c, queries.CreateValidationCodeParams{
+		Email: body.Email,
+		Code:  "123456",
+	})
+	if err != nil {
+		// TODO 暂时没有做校验
+		c.Status(400)
+		return
+	}
+	err = email.SendValidationCode(vc.Email, vc.Code)
 	if err != nil {
 		log.Println("[SendValidationCode fail]", err)
 		c.String(500, "发送失败")

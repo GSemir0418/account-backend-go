@@ -3,6 +3,7 @@ package router
 import (
 	viper_config "account/config"
 	"account/internal/controller"
+	"account/internal/database"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"     // swagger embed files
@@ -15,6 +16,8 @@ import (
 func New() *gin.Engine {
 	// 读取 viper 配置
 	viper_config.LoadViperConfig()
+	// 连接数据库
+	database.Connect()
 	// 创建路由
 	r := gin.Default()
 	r.GET("/api/v1/ping", controller.Ping)
