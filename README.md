@@ -217,3 +217,7 @@ router 连接数据库
 
 为了方便测试 封装 CountValidationCodes 方法
 在测试环境下注意要先 router.New 连接数据库，然后再查询
+
+生成真随机验证码
+使用 crypto/rand 库
+注意数字切片转换为字符编码的逻辑
