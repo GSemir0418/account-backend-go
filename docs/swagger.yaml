@@ -26,6 +26,21 @@ paths:
       summary: 测试服务是否启动
       tags:
       - Ping
+  /validation_codes:
+    post:
+      consumes:
+      - application/json
+      description: 生成验证码，发送至用户邮箱
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: 发送验证码到用户邮箱
+      tags:
+      - ValidationCode
 securityDefinitions:
   BasicAuth(JWT):
     type: basic

@@ -34,6 +34,29 @@
                     }
                 }
             }
+        },
+        "/validation_codes": {
+            "post": {
+                "description": "生成验证码，发送至用户邮箱",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ValidationCode"
+                ],
+                "summary": "发送验证码到用户邮箱",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
         }
     },
     "securityDefinitions": {
