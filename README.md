@@ -187,3 +187,22 @@ go 通过 os.Getenv("EMAIL_SMTP_PWD") 获取到密码即可
 main里面设置配置文件路径并读取
 viper.config.json.example 可以提交
 viper.config.json 不能提交
+为了方便测试环境读取viper配置
+将 viper 的配置文件统一存放到 $HOME/.account 项目目录下
+使用绝对路径读取配置文件即可
+封装Viper的读取逻辑 在 router 中引入将
+
+创建第一个路由
+拿到json请求体数据
+1. 声明结构体实例
+2. 将结构体实例绑定到上下文
+3. 此时结构体实例body就是请求体了
+
+测试构造请求体数据
+strings.NewReader(`{"email": "test@qq.com"}`)
+
+测试环境不会运行 main.go
+且运行了也无法正确读取 viper 的配置（路径）
+所以将 viper 的配置文件统一存放到 $HOME/.account 项目目录下
+使用绝对路径读取配置文件即可
+封装Viper的读取逻辑 在 router 中引入

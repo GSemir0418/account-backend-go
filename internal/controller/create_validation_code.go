@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"account/internal/email"
 	"log"
 	"net/http"
 
@@ -30,5 +31,11 @@ func CreateValidationCode(c *gin.Context) {
 	// 3. 此时结构体实例body就是请求体了
 	log.Println("--------------------")
 	log.Println(body.Email)
-	c.String(http.StatusOK, "pong")
+	err := email.SendValidationCode(body.Email, "123456")
+	if err != nil {
+		log.Println("[SendValidationCode fail]", err)
+		c.String(500, "发送失败")
+		return
+	}
+	c.Status(http.StatusOK)
 }
