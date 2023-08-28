@@ -1,6 +1,7 @@
 package router
 
 import (
+	viper_config "account/config"
 	"account/internal/controller"
 
 	"github.com/gin-gonic/gin"
@@ -12,9 +13,13 @@ import (
 )
 
 func New() *gin.Engine {
+	// 读取 viper 配置
+	viper_config.LoadViperConfig()
+	// 创建路由
 	r := gin.Default()
 	r.GET("/api/v1/ping", controller.Ping)
 	r.POST("/api/v1/validation_codes", controller.CreateValidationCode)
+	// 文档路由及配置
 	docs.SwaggerInfo.Version = "1.0"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	return r

@@ -2,9 +2,7 @@ package main
 
 import (
 	"account/cmd"
-	"log"
-
-	"github.com/spf13/viper"
+	viper_config "account/config"
 )
 
 // @title           记账
@@ -24,13 +22,7 @@ import (
 
 func main() {
 	// 读取本地密钥
-	viper.AddConfigPath(".")
-	viper.SetConfigName("viper.config")
-	viper.SetConfigType("json")
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatalln(err)
-	}
+	viper_config.LoadViperConfig()
 	// 初始化命令行程序
 	cmd.Run()
 }
