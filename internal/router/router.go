@@ -22,6 +22,7 @@ func New() *gin.Engine {
 	r := gin.Default()
 	r.GET("/api/v1/ping", controller.Ping)
 	r.POST("/api/v1/validation_codes", controller.CreateValidationCode)
+	r.POST("/api/v1/session", controller.CreateSession)
 	// 文档路由及配置
 	docs.SwaggerInfo.Version = "1.0"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

@@ -63,6 +63,7 @@ sqlc
 性能测试
 
 使用 cobra 创建命令行程序
+工作流！
 > https://github.com/spf13/cobra
 实现类似 rails 的 bin/rails db:create 等命令
 go get -u github.com/spf13/cobra@latest
@@ -230,3 +231,9 @@ go install github.com/mailhog/MailHog@latest
 需要将读取到的邮件配置的email.smtp.host和email.smtp.port覆盖(放到 router.New 之后)
 MailHog 命令启动本地邮件服务器 8025 前端 1025 是后端
 此外该服务器还提供了api用于读取全部收到的邮件，用于在测试代码中调用 这样连打开网页检查都不用了
+
+
+登录 api
+创建路由
+获取请求体（定义struct 绑定json请求体）
+定义查询validation_code语句：查询email和code且没有被使用过
