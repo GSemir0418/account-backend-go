@@ -240,3 +240,15 @@ MailHog 命令启动本地邮件服务器 8025 前端 1025 是后端
 防止重复连接数据库（并发）
 不断完善测试，注意执行流程及结构体和json之间的转换
 注意函数参数类型
+
+生成jwt
+> https://github.com/golang-jwt/jwt
+> 示例 https://pkg.go.dev/github.com/golang-jwt/jwt/v5#example-New-Hmac
+
+go get -u github.com/golang-jwt/jwt/v5
+
+创建 jwt_helper package
+定义两个方法，分别用于生成加密用的密钥，以及根据用户id生成jwt字符串
+在测试代码中使用fmt.Println打印 resBody 中的 JWT
+执行测试的代码中加 -v 可以显示详情
+go test -timeout 30s -run '^TestSession$' account/test/controller_test -v

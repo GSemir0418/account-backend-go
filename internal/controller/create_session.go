@@ -3,6 +3,8 @@ package controller
 import (
 	queries "account/config/sqlc"
 	"account/internal/database"
+	"account/internal/jwt_helper"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +30,12 @@ func CreateSession(c *gin.Context) {
 		return
 	}
 	// 返回 jwt
-	jwt := "xxxx"
+	jwt, err := jwt_helper.GenerateJWT(1)
+	if err != nil {
+		log.Println("Generate JWT Error", err)
+		c.String(http.StatusInternalServerError, "请稍后再试")
+		return
+	}
 	// 正常情况下需要先创建相应体的结构体，再赋值
 	// gin 提供了 H 方法，可以省略定义结构体的步骤，直接定义 json
 	c.JSON(http.StatusOK, gin.H{

@@ -6,6 +6,7 @@ import (
 	"account/internal/router"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -53,6 +54,8 @@ func TestSession(t *testing.T) {
 	var resBody struct {
 		JWT string `json:"jwt"`
 	}
+	fmt.Println("JWT==========")
+	fmt.Println(w.Body.String())
 	if err := json.Unmarshal(w.Body.Bytes(), &resBody); err != nil {
 		t.Error("jwt is not a string")
 	}
