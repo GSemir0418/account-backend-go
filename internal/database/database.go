@@ -30,6 +30,11 @@ const (
 )
 
 func Connect() {
+	// 防止重复连接
+	// 但并发连接情况下，需要加锁，这个后面再学习
+	if DB != nil {
+		return
+	}
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
