@@ -4,9 +4,14 @@ package cmd
 import (
 	"account/internal/database"
 	"account/internal/email"
+	"account/internal/jwt_helper"
 	"account/internal/router"
+	"fmt"
+	"log"
+	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func Run() {
@@ -17,6 +22,18 @@ func Run() {
 		Use: "server",
 		Run: func(cmd *cobra.Command, args []string) {
 			RunServer()
+		},
+	}
+	generateHmacSecretCmd := &cobra.Command{
+		Use: "generateHmacSecret",
+		Run: func(cmd *cobra.Command, args []string) {
+			// 生成jwt密钥并保存到本地
+			bytes, _ := jwt_helper.GenerateHmacSecret()
+			keyPath := viper.GetString("jwt.hmac.keyPath")
+			if err := os.WriteFile(keyPath, bytes, 0644); err != nil {
+				log.Fatalln(err)
+			}
+			fmt.Println("HMAC key has been saved in ", keyPath)
 		},
 	}
 	dbCmd := &cobra.Command{
@@ -57,7 +74,7 @@ func Run() {
 	// 会在当前函数执行结束后执行
 	defer database.Close()
 
-	rootCmd.AddCommand(srvCmd, dbCmd, emailCmd)
+	rootCmd.AddCommand(srvCmd, dbCmd, emailCmd, generateHmacSecretCmd)
 	dbCmd.AddCommand(mgrCreateCmd, mgrtDownCmd, mgrtUpCmd, crudCmd)
 
 	rootCmd.Execute()

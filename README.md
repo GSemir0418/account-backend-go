@@ -260,6 +260,10 @@ go test -timeout 30s -run '^TestSession$' account/test/controller_test -v
 避免重复创建测试用户失败，将删除表的操作以及初始化测试的代码抽离出来
 省略 jwt 解密过程，登录后返回userId
 
+将HMAC密钥生成后保存到本地环境变量，避免重复生成（因为解密要用）
+os.WriteFile保存到本地，viper环境变量中存文件路径即可/Users/gsemir/.account/jwt/hmac.key
+通过命令行工具生成 jwt 密钥并保存
+
 
 展示测试覆盖率
 go test -coverprofile=coverage.out ./...
