@@ -250,5 +250,19 @@ go get -u github.com/golang-jwt/jwt/v5
 创建 jwt_helper package
 定义两个方法，分别用于生成加密用的密钥，以及根据用户id生成jwt字符串
 在测试代码中使用fmt.Println打印 resBody 中的 JWT
+在构造测试背景时报错使用log.Fatalln
+在处理测试错误时使用t.Error
 执行测试的代码中加 -v 可以显示详情
 go test -timeout 30s -run '^TestSession$' account/test/controller_test -v
+
+继续生成 user_id
+有则读取，没有则创建
+避免重复创建测试用户失败，将删除表的操作以及初始化测试的代码抽离出来
+省略 jwt 解密过程，登录后返回userId
+
+
+展示测试覆盖率
+go test -coverprofile=coverage.out ./...
+go tool cover -html=coverage.out -o coverage.html
+由于测试文件和测试代码不在同一个目录下，导致测试覆盖率无法正确展示
+将测试文件复制过去后，修改包名为 controller，会报错，由于我们在测试中引入了 router 而router又引用了controller，导致循环引用

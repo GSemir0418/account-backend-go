@@ -29,8 +29,18 @@ func CreateSession(c *gin.Context) {
 		c.String(http.StatusBadRequest, "无效的验证码")
 		return
 	}
+	// 查询 User，有则返回，没有就创建
+	user, err := q.FindUserByEmail(c, reqBody.Email)
+	if err != nil {
+		user, err = q.CreateUser(c, reqBody.Email)
+		if err != nil {
+			log.Println("Create User error", err)
+			c.String(http.StatusInternalServerError, "请稍后再试")
+			return
+		}
+	}
 	// 返回 jwt
-	jwt, err := jwt_helper.GenerateJWT(1)
+	jwt, err := jwt_helper.GenerateJWT(int(user.ID))
 	if err != nil {
 		log.Println("Generate JWT Error", err)
 		c.String(http.StatusInternalServerError, "请稍后再试")
@@ -39,7 +49,8 @@ func CreateSession(c *gin.Context) {
 	// 正常情况下需要先创建相应体的结构体，再赋值
 	// gin 提供了 H 方法，可以省略定义结构体的步骤，直接定义 json
 	c.JSON(http.StatusOK, gin.H{
-		"jwt": jwt,
+		"jwt":    jwt,
+		"userId": user.ID,
 	})
 
 }
