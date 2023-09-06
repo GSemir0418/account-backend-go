@@ -1,9 +1,9 @@
-package controller_test
+package controller
 
 import (
+	viper_config "account/config"
 	queries "account/config/sqlc"
 	"account/internal/database"
-	"account/internal/router"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -24,7 +24,15 @@ var (
 )
 
 func setUpTest(t *testing.T) func(t *testing.T) {
-	r = router.New()
+	// 读取 viper 配置
+	viper_config.LoadViperConfig()
+	// 连接数据库
+	database.Connect()
+	// 初始化 gin 服务器，注册路由
+	r = gin.Default()
+	sc := SessionController{}
+	sc.RegisterRoutes(r.Group("/api"))
+
 	q = database.NewQuery()
 	c = context.Background()
 	// 删除 User 表

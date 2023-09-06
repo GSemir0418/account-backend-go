@@ -266,7 +266,32 @@ os.WriteFile保存到本地，viper环境变量中存文件路径即可/Users/gs
 
 
 展示测试覆盖率
-go test -coverprofile=coverage.out ./...
-go tool cover -html=coverage.out -o coverage.html
+go test -coverprofile=coverage/coverage.out ./...
+生成测试覆盖率html
+go tool cover -html=coverage/coverage.out -o coverage/coverage.html
 由于测试文件和测试代码不在同一个目录下，导致测试覆盖率无法正确展示
-将测试文件复制过去后，修改包名为 controller，会报错，由于我们在测试中引入了 router 而router又引用了controller，导致循环引用
+将测试文件复制过去后，统一包名为 controller，会报错，由于我们在测试中引入了 router 而router又引用了controller，导致循环引用
+router 引用 controller 是必然的
+那么就要想办法切断测试中对 router 的引用
+复制初始化gin服务器、初始化路由、加载配置和连接数据库的操作到 setupTest函数中即可。
+
+创建 controller 接口
+为了统一管理 ctrler 开发与引入
+各模块的 ctrler 就是一个结构体 包含 ctrler 接口规定的 Create Destroy Update Find RegisterRoutes
+go 中没有继承与实现的概念，只要这个结构体有接口要求的方法就可以作为这个接口的实现
+
+自动编写各模块 controller 结构体方法：
+> https://github.com/josharian/impl
+> go install github.com/josharian/impl@latest
+生成代码到控制台供复制
+impl 'ctrl *SessionController' account/internal/controller.Controller
+也可以用vscode 插件 ctrl shift p go stubs
+输入: ctrl *SessionController account/internal/controller.Controller
+
+总结
+r.POST("/api/v1/session", controller.CreateSession)
+=>
+每个 controller 自己注册路由，分配路由
+v1 := rg.Group("v1")
+v1.POST("session", ctrl.Create)
+而 router 只负责循环调用每个 ctrler 的 register 方法
