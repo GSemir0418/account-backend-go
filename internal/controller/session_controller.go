@@ -10,10 +10,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateSession(c *gin.Context) {
+type SessionController struct{}
+
+func (ctrl *SessionController) Create(c *gin.Context) {
 	var reqBody struct {
-		Email string `json:"email" binding:"required"` // 必填项
-		Code  string `json:"code" binding:"required"`  // 必填项
+		Email string `json:"email" binding:"required"`
+		Code  string `json:"code" binding:"required"`
 	}
 	// 把JSON格式的请求体 转换为 go 的结构体
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
@@ -53,4 +55,21 @@ func CreateSession(c *gin.Context) {
 		"userId": user.ID,
 	})
 
+}
+
+func (ctrl *SessionController) Update(c *gin.Context) {
+	panic("not implemented") // TODO: Implement
+}
+
+func (ctrl *SessionController) Find(c *gin.Context) {
+	panic("not implemented") // TODO: Implement
+}
+
+func (ctrl *SessionController) Destory(c *gin.Context) {
+	panic("not implemented") // TODO: Implement
+}
+
+func (ctrl *SessionController) RegisterRoutes(rg *gin.RouterGroup) {
+	v1 := rg.Group("/v1")
+	v1.POST("session", ctrl.Create)
 }
