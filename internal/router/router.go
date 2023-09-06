@@ -20,7 +20,7 @@ func New() *gin.Engine {
 	database.Connect()
 	// 创建路由
 	r := gin.Default()
-	r.GET("/api/v1/ping", controller.Ping)
+	r.GET("/ping", controller.Ping)
 	r.POST("/api/v1/validation_codes", controller.CreateValidationCode)
 	r.POST("/api/v1/session", controller.CreateSession)
 	// 文档路由及配置
