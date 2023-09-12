@@ -1,25 +1,31 @@
-package controller_test
+package controller
 
 import (
+	viper_config "account/config"
 	"account/internal/database"
-	"account/internal/router"
 	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateValidationCode(t *testing.T) {
-	// 注意要先在 New 中连接数据库，然后再查询
-	r := router.New()
+	// 初始化测试环境
+	r := gin.Default()
+	database.Connect()
+	viper_config.LoadViperConfig()
+	vcc := ValidationCodeController{}
+	vcc.RegisterRoutes(r.Group("/api"))
+	c := context.Background()
+	q := database.NewQuery()
+
 	viper.Set("email.smtp.port", "1025")
 	viper.Set("email.smtp.host", "localhost")
-	q := database.NewQuery()
-	c := context.Background()
 	count1, _ := q.CountValidationCodes(c, "845217811@qq.com")
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/api/v1/validation_codes", strings.NewReader(`{"email": "845217811@qq.com"}`))

@@ -34,7 +34,6 @@ func New() *gin.Engine {
 	for _, ctrl := range loadControllers() {
 		ctrl.RegisterRoutes(rg)
 	}
-	r.POST("/api/v1/validation_codes", controller.CreateValidationCode)
 	// 文档路由及配置
 	docs.SwaggerInfo.Version = "1.0"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

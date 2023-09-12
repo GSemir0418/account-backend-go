@@ -11,16 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// CreateValidationCodes godoc
-// @Summary      发送验证码到用户邮箱
-// @Description  生成验证码，发送至用户邮箱
-// @Tags         ValidationCode
-// @Accept       json
-// @Produce      json
-// @Success      200
-// @Failure      500
-// @Router       /validation_codes [post]
-func CreateValidationCode(c *gin.Context) {
+type ValidationCodeController struct{}
+
+func (ctrl *ValidationCodeController) Create(c *gin.Context) {
 	var body struct {
 		Email string `json:"email"`
 	}
@@ -51,6 +44,23 @@ func CreateValidationCode(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusOK)
+}
+
+func (ctrl *ValidationCodeController) Update(c *gin.Context) {
+	panic("not implemented") // TODO: Implement
+}
+
+func (ctrl *ValidationCodeController) Find(c *gin.Context) {
+	panic("not implemented") // TODO: Implement
+}
+
+func (ctrl *ValidationCodeController) Destory(c *gin.Context) {
+	panic("not implemented") // TODO: Implement
+}
+
+func (ctrl *ValidationCodeController) RegisterRoutes(rg *gin.RouterGroup) {
+	v1 := rg.Group("/v1")
+	v1.POST("validation_codes", ctrl.Create)
 }
 
 // 使用内置库 crypto/rand 生成随机四位验证码
