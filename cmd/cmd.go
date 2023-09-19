@@ -8,7 +8,9 @@ import (
 	"account/internal/router"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"os/exec"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -69,12 +71,43 @@ func Run() {
 			database.Crud()
 		},
 	}
-
+	coverCmd := &cobra.Command{
+		Use: "coverage",
+		Run: func(cmd *cobra.Command, args []string) {
+			// 预先在根目录下创建 coverage 文件夹
+			os.MkdirAll("coverage", os.ModePerm)
+			// 使用 exec 执行命令行
+			if err := exec.Command("MailHog").Start(); err != nil {
+				log.Println(err)
+			}
+			if err := exec.Command(
+				"go", "test", "-coverprofile=coverage/cover.out", "./...",
+			).Run(); err != nil {
+				log.Fatalln(err)
+			}
+			if err := exec.Command(
+				"go", "tool", "cover", "-html=coverage/cover.out", "-o", "coverage/index.html",
+			).Run(); err != nil {
+				log.Fatalln(err)
+			}
+			// 使用 gin 开启本地服务
+			var port string
+			if len(args) > 0 {
+				port = args[0]
+			} else {
+				port = "8888"
+			}
+			fmt.Println("http://localhost:" + port + "/coverage/index.html")
+			if err := http.ListenAndServe(":"+port, http.FileServer(http.Dir("."))); err != nil {
+				log.Fatalln(err)
+			}
+		},
+	}
 	database.Connect()
 	// 会在当前函数执行结束后执行
 	defer database.Close()
 
-	rootCmd.AddCommand(srvCmd, dbCmd, emailCmd, generateHmacSecretCmd)
+	rootCmd.AddCommand(srvCmd, dbCmd, emailCmd, generateHmacSecretCmd, coverCmd)
 	dbCmd.AddCommand(mgrCreateCmd, mgrtDownCmd, mgrtUpCmd, crudCmd)
 
 	rootCmd.Execute()

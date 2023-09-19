@@ -295,3 +295,11 @@ r.POST("/api/v1/session", controller.CreateSession)
 v1 := rg.Group("v1")
 v1.POST("session", ctrl.Create)
 而 router 只负责循环调用每个 ctrler 的 register 方法
+
+
+优化测试工作流
+目前我们的TDD流程为
+写测试 => 写代码 => 开启 MailHog => 执行测试 => 生成覆盖率 => 生成覆盖率 html => 开启http服务打开html => 根据覆盖率调整测试代码
+可以将这些抽离为一个控制台命令
+os/exec 包提供了运行脚本的功能
+这样能够将测试结果可视化，方便补充测试用例
