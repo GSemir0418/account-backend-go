@@ -1,28 +1,22 @@
 package controller
 
 import (
-	viper_config "account/config"
-	"account/internal/database"
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateValidationCode(t *testing.T) {
 	// 初始化测试环境
-	r := gin.Default()
-	database.Connect()
-	viper_config.LoadViperConfig()
+	teardownTest := setUpTestCase(t)
+	defer teardownTest(t)
+	// 注册路由
 	vcc := ValidationCodeController{}
 	vcc.RegisterRoutes(r.Group("/api"))
-	c := context.Background()
-	q := database.NewQuery()
 
 	viper.Set("email.smtp.port", "1025")
 	viper.Set("email.smtp.host", "localhost")

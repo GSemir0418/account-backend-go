@@ -1,10 +1,7 @@
 package controller
 
 import (
-	viper_config "account/config"
 	queries "account/config/sqlc"
-	"account/internal/database"
-	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -17,38 +14,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	r *gin.Engine
-	q *queries.Queries
-	c context.Context
-)
-
-func setUpTest(t *testing.T) func(t *testing.T) {
-	// 读取 viper 配置
-	viper_config.LoadViperConfig()
-	// 连接数据库
-	database.Connect()
-	// 初始化 gin 服务器，注册路由
-	r = gin.Default()
-	sc := SessionController{}
-	sc.RegisterRoutes(r.Group("/api"))
-
-	q = database.NewQuery()
-	c = context.Background()
-	// 删除 User 表
-	if err := q.DeleteAllUsers(c); err != nil {
-		t.Fatal(err)
-	}
-	return func(t *testing.T) {
-		database.Close()
-	}
-
-}
-
 func TestSession(t *testing.T) {
 	// 初始化测试环境
-	teardownTest := setUpTest(t)
+	teardownTest := setUpTestCase(t)
 	defer teardownTest(t)
+	// 注册路由
+	sc := SessionController{}
+	sc.RegisterRoutes(r.Group("/api"))
 	// 创建真实的验证码
 	email := "1@qq.com"
 	code := "1234"

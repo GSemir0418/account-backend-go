@@ -302,4 +302,21 @@ v1.POST("session", ctrl.Create)
 写测试 => 写代码 => 开启 MailHog => 执行测试 => 生成覆盖率 => 生成覆盖率 html => 开启http服务打开html => 根据覆盖率调整测试代码
 可以将这些抽离为一个控制台命令
 os/exec 包提供了运行脚本的功能
+exec.Command(...).Start()和Run()的区别
+start会执行这条命令，但不会等待其结束，直接执行下一行代码
 这样能够将测试结果可视化，方便补充测试用例
+
+me controller
+get请求，获取用户信息
+读取请求头的jwt信息，解码出id，去数据库中查询id对应的用户，返回此用户
+go stub 插件，输入 ctrl *MeController account/internal/controller.Controller
+注册路由
+写测试
+抽离测试初始化方法为setup_test_case.go
+1. 读取环境变量配置（email，secret等）
+2. 连接数据库实例 q
+3. 初始化 gin 服务器实例 r
+4. 初始化上下文参数 c
+5. 删除 user 表，方便测试
+6. 返回清理函数，开发者自行选择执行
+共有三个测试用例公共变量 r q c
