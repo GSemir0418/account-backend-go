@@ -20,19 +20,41 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/ping": {
+        "/api/v1/me": {
             "get": {
-                "description": "测试服务是否启动",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "tags": [
-                    "Ping"
+                "summary": "获取当前登录用户",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.GetMeResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/ping": {
+            "get": {
+                "description": "如果返回 200，说明服务正常运行",
+                "consumes": [
+                    "application/json"
                 ],
-                "summary": "测试服务是否启动",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "服务健康度",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -42,27 +64,31 @@ const docTemplate = `{
                     }
                 }
             }
+        }
+    },
+    "definitions": {
+        "api.GetMeResponse": {
+            "type": "object",
+            "properties": {
+                "resource": {
+                    "$ref": "#/definitions/queries.User"
+                }
+            }
         },
-        "/validation_codes": {
-            "post": {
-                "description": "生成验证码，发送至用户邮箱",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ValidationCode"
-                ],
-                "summary": "发送验证码到用户邮箱",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
-                    }
+        "queries.User": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
                 }
             }
         }
@@ -82,7 +108,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "",
 	Host:             "localhost:8080",
-	BasePath:         "/api/v1",
+	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "记账",
 	Description:      "记账应用接口文档",

@@ -327,3 +327,10 @@ jwt 的 *jwt.Token 是一个结构体类型的指针，表示一个 jwt 对象�
 断点调试
 go install -v github.com/go-delve/delve/cmd/dlv@latest
 点 debug test 也行 vscode 自动安装 使用默认配置即可
+
+重新生成 API 文档
+https://github.com/swaggo/swag/blob/master/README_zh-CN.md#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B
+controller 中添加注释
+创建文档
+swag init && go build . && ./account sever
+为了方便获取到返回值的类型（api文档注释最多读取两层包的数据），封装一个 api 的包，里面注明各接口返回值类型（取sqlc生成的结构体类型即可）

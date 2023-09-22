@@ -1,4 +1,21 @@
-basePath: /api/v1
+basePath: /
+definitions:
+  api.GetMeResponse:
+    properties:
+      resource:
+        $ref: '#/definitions/queries.User'
+    type: object
+  queries.User:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -11,11 +28,27 @@ info:
   description: 记账应用接口文档
   title: 记账
 paths:
+  /api/v1/me:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.GetMeResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: 获取当前登录用户
   /ping:
     get:
       consumes:
       - application/json
-      description: 测试服务是否启动
+      description: 如果返回 200，说明服务正常运行
       produces:
       - application/json
       responses:
@@ -23,24 +56,7 @@ paths:
           description: OK
         "500":
           description: Internal Server Error
-      summary: 测试服务是否启动
-      tags:
-      - Ping
-  /validation_codes:
-    post:
-      consumes:
-      - application/json
-      description: 生成验证码，发送至用户邮箱
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "500":
-          description: Internal Server Error
-      summary: 发送验证码到用户邮箱
-      tags:
-      - ValidationCode
+      summary: 服务健康度
 securityDefinitions:
   BasicAuth(JWT):
     type: basic

@@ -10,6 +10,14 @@ import (
 
 type MeController struct{}
 
+// GetMe
+//
+//	@Summary	获取当前登录用户
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	api.GetMeResponse
+//	@Failure	401 {string}  无效的JWT
+//	@Router		/api/v1/me [get]
 func (ctrl *MeController) Get(c *gin.Context) {
 	// 从 Header 拿到 jwt
 	auth := c.GetHeader("Authorization")
