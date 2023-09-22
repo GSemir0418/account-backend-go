@@ -341,3 +341,10 @@ swag init && go build . && ./account sever
 自动添加 json 注释 emit_json_tags: true
 指定 json 风格 json_tags_case_style: snake
 snake pascal camel
+
+gin 中间件
+将接口鉴权流程提取出来，即 GetMe 的逻辑 提取作为中间件
+注意返回值和参数
+修改 router.go
+修改 测试的 setup
+运行测试

@@ -4,6 +4,7 @@ import (
 	viper_config "account/config"
 	"account/internal/controller"
 	"account/internal/database"
+	"account/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"     // swagger embed files
@@ -28,7 +29,6 @@ func New() *gin.Engine {
 	// 创建路由
 	r := gin.Default()
 	r.GET("/ping", controller.Ping)
-
 	// 注册路由
 	rg := r.Group("/api")
 	for _, ctrl := range loadControllers() {
@@ -37,5 +37,9 @@ func New() *gin.Engine {
 	// 文档路由及配置
 	docs.SwaggerInfo.Version = "1.0"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	// 应用中间件
+	r.Use(middleware.Me([]string{"/swagger", "/api/v1/session", "/api/v1/validation_codes", "/ping"}))
+
 	return r
 }

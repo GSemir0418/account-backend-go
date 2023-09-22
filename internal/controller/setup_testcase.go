@@ -4,6 +4,7 @@ import (
 	viper_config "account/config"
 	queries "account/config/sqlc"
 	"account/internal/database"
+	"account/internal/middleware"
 	"context"
 	"testing"
 
@@ -24,6 +25,8 @@ func setUpTestCase(t *testing.T) func(t *testing.T) {
 	q = database.NewQuery()
 	// 初始化 gin 服务器
 	r = gin.Default()
+	// 应用中间件
+	r.Use(middleware.Me([]string{"/swagger", "/api/v1/session", "/api/v1/validation_codes", "/ping"}))
 	// 默认上下文
 	c = context.Background()
 	// 删除 User 表
