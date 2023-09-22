@@ -33,3 +33,13 @@ func GenerateHmacSecret() ([]byte, error) {
 	}
 	return key, nil
 }
+
+func ParseJWT(jwtString string) (*jwt.Token, error) {
+	key, err := getHmacSecret()
+	if err != nil {
+		return nil, err
+	}
+	return jwt.Parse(jwtString, func(t *jwt.Token) (interface{}, error) {
+		return key, nil
+	})
+}

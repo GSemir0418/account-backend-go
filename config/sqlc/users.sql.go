@@ -34,6 +34,23 @@ func (q *Queries) DeleteAllUsers(ctx context.Context) error {
 	return err
 }
 
+const findUser = `-- name: FindUser :one
+SELECT id, email, created_at, updated_at FROM users
+WHERE id = $1
+`
+
+func (q *Queries) FindUser(ctx context.Context, id int32) (User, error) {
+	row := q.db.QueryRowContext(ctx, findUser, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const findUserByEmail = `-- name: FindUserByEmail :one
 SELECT id, email, created_at, updated_at FROM users
 WHERE email = $1

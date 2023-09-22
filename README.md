@@ -320,3 +320,10 @@ go stub 插件，输入 ctrl *MeController account/internal/controller.Controlle
 5. 删除 user 表，方便测试
 6. 返回清理函数，开发者自行选择执行
 共有三个测试用例公共变量 r q c
+
+断言逻辑、
+jwt 的 *jwt.Token 是一个结构体类型的指针，表示一个 jwt 对象的值
+
+断点调试
+go install -v github.com/go-delve/delve/cmd/dlv@latest
+点 debug test 也行 vscode 自动安装 使用默认配置即可

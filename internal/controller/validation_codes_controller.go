@@ -50,6 +50,10 @@ func (ctrl *ValidationCodeController) Update(c *gin.Context) {
 	panic("not implemented") // TODO: Implement
 }
 
+func (ctrl *ValidationCodeController) Get(c *gin.Context) {
+	panic("not implemented") // TODO: Implement
+}
+
 func (ctrl *ValidationCodeController) Find(c *gin.Context) {
 	panic("not implemented") // TODO: Implement
 }
