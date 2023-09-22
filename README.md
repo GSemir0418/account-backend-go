@@ -334,3 +334,10 @@ controller 中添加注释
 创建文档
 swag init && go build . && ./account sever
 为了方便获取到返回值的类型（api文档注释最多读取两层包的数据），封装一个 api 的包，里面注明各接口返回值类型（取sqlc生成的结构体类型即可）
+
+更改 json 输出格式
+目前我们接口的输出是由 sqlc 自动生成的，例如 created_at 字段，目前的输出是 createdAt，我们要统一json字段风格为snake
+可以在 struct 后添加``json:"created_at"``注释，但 sqlc 不允许我们修改自动生成的文件，只能改 sqlc的配置
+自动添加 json 注释 emit_json_tags: true
+指定 json 风格 json_tags_case_style: snake
+snake pascal camel

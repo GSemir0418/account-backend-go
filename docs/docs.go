@@ -78,7 +78,7 @@ const docTemplate = `{
         "queries.User": {
             "type": "object",
             "properties": {
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
                 "email": {
@@ -87,7 +87,7 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "updatedAt": {
+                "updated_at": {
                     "type": "string"
                 }
             }

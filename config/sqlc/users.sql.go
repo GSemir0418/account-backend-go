@@ -76,8 +76,8 @@ LIMIT $2
 `
 
 type ListUsersParams struct {
-	Offset int32
-	Limit  int32
+	Offset int32 `json:"offset"`
+	Limit  int32 `json:"limit"`
 }
 
 func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error) {
@@ -113,8 +113,8 @@ UPDATE users SET email = $2 WHERE id = $1
 `
 
 type UpdateUserParams struct {
-	ID    int32
-	Email string
+	ID    int32  `json:"id"`
+	Email string `json:"email"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {

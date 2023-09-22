@@ -5,5 +5,7 @@ sql:
     schema: "config/schema.sql"
     gen: 
       go:
+        emit_json_tags: true
+        json_tags_case_style: snake
         package: "queries"
         out: "config/sqlc"

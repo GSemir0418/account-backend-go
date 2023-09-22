@@ -7,13 +7,13 @@ definitions:
     type: object
   queries.User:
     properties:
-      createdAt:
+      created_at:
         type: string
       email:
         type: string
       id:
         type: integer
-      updatedAt:
+      updated_at:
         type: string
     type: object
 externalDocs:

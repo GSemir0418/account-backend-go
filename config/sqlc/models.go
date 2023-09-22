@@ -10,17 +10,17 @@ import (
 )
 
 type User struct {
-	ID        int32
-	Email     string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        int32     `json:"id"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type ValidationCode struct {
-	ID        int32
-	Email     string
-	Code      string
-	UsedAt    sql.NullTime
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        int32        `json:"id"`
+	Email     string       `json:"email"`
+	Code      string       `json:"code"`
+	UsedAt    sql.NullTime `json:"used_at"`
+	CreatedAt time.Time    `json:"created_at"`
+	UpdatedAt time.Time    `json:"updated_at"`
 }
