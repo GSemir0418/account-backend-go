@@ -348,3 +348,31 @@ gin 中间件
 修改 router.go
 修改 测试的 setup
 运行测试
+
+开发 items api
+1. 创建路由和控制器
+ctrl shift p go stubs
+输入: ctrl *ItemController account/internal/controller.Controller
+2. 注册路由
+3. 数据库迁移
+1 创建迁移文件
+go build; ./account db migrate:create create_items_table
+2 编写迁移命令（创建枚举类型及数据表）
+因为每次迁移最好只做一件事，使用事务，确保迁移过程的多次关联操作不会出错，或者引起数据库异常（类型与表格必须同时存在）
+pgsql 支持定义枚举类型(kind)，以及数组类型（tag_ids）,mysql中只能用关联表来做
+3 执行迁移命令
+go build; ./account db migrate:up
+如果出错了，且不能使用回滚来解决，那么手动修改数据库的 schema_migrations 表格，将数据设置为上次的版本，dirty为false
+update schema_migrations set version=3,dirty=false;
+手动修改数据库或迁移文件错误后，重新执行迁移即可
+4. sqlc 生成
+1 写model
+schema.sql 写建表语句
+2 写方法
+queries/items.sql 写创建方法
+3 sqlc generate
+1. 写 Create API
+1 声明 body 结构体，将请求上下文绑定到 body 中
+2 获取当前登录用户
+3 items 表新增
+4 返回 item
