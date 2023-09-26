@@ -31,6 +31,7 @@ const docTemplate = `{
                 "summary": "创建账目",
                 "parameters": [
                     {
+                        "example": 100,
                         "description": "金额（单位：分）",
                         "name": "amount",
                         "in": "body",
@@ -40,6 +41,7 @@ const docTemplate = `{
                         }
                     },
                     {
+                        "example": "expenses",
                         "description": "类型",
                         "name": "kind",
                         "in": "body",
@@ -49,6 +51,7 @@ const docTemplate = `{
                         }
                     },
                     {
+                        "example": "2023-09-26T00:00:00Z",
                         "description": "发生时间",
                         "name": "happened_at",
                         "in": "body",
@@ -58,6 +61,7 @@ const docTemplate = `{
                         }
                     },
                     {
+                        "example": "[1,2,3]",
                         "description": "标签ID列表",
                         "name": "tag_ids",
                         "in": "body",
@@ -143,7 +147,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "resource": {
-                    "$ref": "#/definitions/queries.User"
+                    "$ref": "#/definitions/queries.Item"
                 }
             }
         },
@@ -154,6 +158,49 @@ const docTemplate = `{
                     "$ref": "#/definitions/queries.User"
                 }
             }
+        },
+        "queries.Item": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "happened_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "kind": {
+                    "$ref": "#/definitions/queries.Kind"
+                },
+                "tag_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "queries.Kind": {
+            "type": "string",
+            "enum": [
+                "expenses",
+                "in_come"
+            ],
+            "x-enum-varnames": [
+                "KindExpenses",
+                "KindInCome"
+            ]
         },
         "queries.User": {
             "type": "object",

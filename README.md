@@ -383,3 +383,19 @@ queries/items.sql 写创建方法
 4 创建用户 添加请求头权限字段
 5 r 发起请求
 6 断言
+
+文档格式
+// CreateItem
+//
+//	@Summary	创建账目
+//	@Accept		json
+//	@Produce	json
+//	@Param		amount		body		int		true	"金额（单位：分）"	example(100)
+//	@Param		kind		body		queries.Kind	true	"类型"		example(expenses)
+//	@Param		tag_ids		body		[]string		true	"标签ID列表"	example([1,2,3])
+//	@Success	200			{object}	api.CreateItemResponse
+//	@Failure	401			{string}	string	无效的JWT
+//	@Failure	422			{string}	string	参数错误
+//	@Router		/api/v1/items [post]
+
+

@@ -3,13 +3,42 @@ definitions:
   api.CreateItemResponse:
     properties:
       resource:
-        $ref: '#/definitions/queries.User'
+        $ref: '#/definitions/queries.Item'
     type: object
   api.GetMeResponse:
     properties:
       resource:
         $ref: '#/definitions/queries.User'
     type: object
+  queries.Item:
+    properties:
+      amount:
+        type: integer
+      created_at:
+        type: string
+      happened_at:
+        type: string
+      id:
+        type: integer
+      kind:
+        $ref: '#/definitions/queries.Kind'
+      tag_ids:
+        items:
+          type: integer
+        type: array
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  queries.Kind:
+    enum:
+    - expenses
+    - in_come
+    type: string
+    x-enum-varnames:
+    - KindExpenses
+    - KindInCome
   queries.User:
     properties:
       created_at:
@@ -39,24 +68,28 @@ paths:
       - application/json
       parameters:
       - description: 金额（单位：分）
+        example: 100
         in: body
         name: amount
         required: true
         schema:
           type: integer
       - description: 类型
+        example: expenses
         in: body
         name: kind
         required: true
         schema:
           type: string
       - description: 发生时间
+        example: "2023-09-26T00:00:00Z"
         in: body
         name: happened_at
         required: true
         schema:
           type: string
       - description: 标签ID列表
+        example: '[1,2,3]'
         in: body
         name: tag_ids
         required: true
