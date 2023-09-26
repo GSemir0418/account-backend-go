@@ -371,8 +371,15 @@ schema.sql 写建表语句
 2 写方法
 queries/items.sql 写创建方法
 3 sqlc generate
-1. 写 Create API
+5. 写 Create API
 1 声明 body 结构体，将请求上下文绑定到 body 中
 2 获取当前登录用户
 3 items 表新增
 4 返回 item
+6. 单元测试
+1 初始化 q r c
+2 注册路由
+3 初始化 w 构造请求 req
+4 创建用户 添加请求头权限字段
+5 r 发起请求
+6 断言
