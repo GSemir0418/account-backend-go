@@ -15,6 +15,19 @@ func (ctrl *ItemController) Get(c *gin.Context) {
 	panic("not implemented") // TODO: Implement
 }
 
+// CreateItem
+//
+//	@Summary	创建账目
+//	@Accept		json
+//	@Produce	json
+//	@Param		amount		body		int				true	"金额（单位：分）"
+//	@Param		kind		body		queries.Kind	true	"类型"
+//	@Param		happened_at	body		string			true	"发生时间"
+//	@Param		tag_ids		body		[]string		true	"标签ID列表"
+//	@Success	200			{object}	api.CreateItemResponse
+//	@Failure	401			{string}	string	无效的JWT
+//	@Failure	422			{string}	string	参数错误
+//	@Router		/api/v1/items [post]
 func (ctrl *ItemController) Create(c *gin.Context) {
 	var body struct {
 		Amount     int32        `json:"amount" binding:"required"`

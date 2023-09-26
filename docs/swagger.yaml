@@ -1,5 +1,10 @@
 basePath: /
 definitions:
+  api.CreateItemResponse:
+    properties:
+      resource:
+        $ref: '#/definitions/queries.User'
+    type: object
   api.GetMeResponse:
     properties:
       resource:
@@ -28,6 +33,53 @@ info:
   description: 记账应用接口文档
   title: 记账
 paths:
+  /api/v1/items:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 金额（单位：分）
+        in: body
+        name: amount
+        required: true
+        schema:
+          type: integer
+      - description: 类型
+        in: body
+        name: kind
+        required: true
+        schema:
+          type: string
+      - description: 发生时间
+        in: body
+        name: happened_at
+        required: true
+        schema:
+          type: string
+      - description: 标签ID列表
+        in: body
+        name: tag_ids
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.CreateItemResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "422":
+          description: Unprocessable Entity
+          schema:
+            type: string
+      summary: 创建账目
   /api/v1/me:
     get:
       consumes:
