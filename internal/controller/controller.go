@@ -8,5 +8,6 @@ type Controller interface {
 	Update(c *gin.Context)
 	Find(c *gin.Context)
 	Destory(c *gin.Context)
+	GetPaged(c *gin.Context)
 	RegisterRoutes(rg *gin.RouterGroup)
 }

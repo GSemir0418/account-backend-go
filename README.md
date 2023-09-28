@@ -429,3 +429,6 @@ debug 配置
   ]
 }
 注意中间件的声明位置，要在所有路由之前Use
+
+item 分页
+取出参数使用c.Params.Get("xxx") 而不是绑定json请求体了

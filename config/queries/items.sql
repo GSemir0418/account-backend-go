@@ -13,3 +13,15 @@ INSERT INTO items (
   $5
 )
 RETURNING *;
+
+-- name: ListItems :many
+SELECT * FROM items
+ORDER BY happened_at DESC
+OFFSET $1
+LIMIT $2;
+
+-- name: CountItems :one
+SELECT count(*) FROM items;
+
+-- name: DeleteAllItems :exec
+DELETE FROM items;

@@ -50,6 +50,10 @@ func (ctrl *MeController) Destory(c *gin.Context) {
 	panic("not implemented") // TODO: Implement
 }
 
+func (ctrl *MeController) GetPaged(c *gin.Context) {
+	panic("not implemented") // TODO: Implement
+}
+
 func (ctrl *MeController) RegisterRoutes(rg *gin.RouterGroup) {
 	v1 := rg.Group("v1")
 	// 注册路由

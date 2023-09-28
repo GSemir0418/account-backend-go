@@ -5,6 +5,8 @@ import (
 	queries "account/config/sqlc"
 	"account/internal/database"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -69,6 +71,62 @@ func (ctrl *ItemController) Find(c *gin.Context) {
 
 func (ctrl *ItemController) Destory(c *gin.Context) {
 	panic("not implemented") // TODO: Implement
+}
+
+func (ctrl *ItemController) GetPaged(c *gin.Context) {
+	var params api.GetPagedItemsRequest
+	pageStr, _ := c.Params.Get("page")
+	if page, err := strconv.Atoi(pageStr); err == nil {
+		params.Page = int32(page)
+	}
+	// page 默认值 1
+	if params.Page == 0 {
+		params.Page = 1
+	}
+	pageSizeStr, _ := c.Params.Get("page_size")
+	if pageSize, err := strconv.Atoi(pageSizeStr); err == nil {
+		params.PageSize = int32(pageSize)
+	}
+	// pageSize 默认值 10
+	if params.PageSize == 0 {
+		params.PageSize = 10
+	}
+	happenedBefore, has := c.Params.Get("happened_before")
+	// 时间参数处理
+	if has {
+		if t, err := time.Parse(time.RFC3339, happenedBefore); err == nil {
+			params.HappenedBefore = t
+		}
+	}
+	happenedAfter, has := c.Params.Get("happened_after")
+	if has {
+		if t, err := time.Parse(time.RFC3339, happenedAfter); err == nil {
+			params.HappenedAfter = t
+		}
+	}
+
+	q := database.NewQuery()
+	items, err := q.ListItems(c, queries.ListItemsParams{
+		Offset: (params.Page - 1) * params.Page,
+		Limit:  params.Page,
+	})
+	if err != nil {
+		c.String(http.StatusInternalServerError, "服务器繁忙")
+		return
+	}
+	count, err := q.CountItems(c)
+	if err != nil {
+		c.String(http.StatusInternalServerError, "服务器繁忙")
+		return
+	}
+	c.JSON(http.StatusOK, api.GetPagesItemsResponse{
+		Resources: items,
+		Pager: api.Pager{
+			Page:     params.Page,
+			PageSize: params.PageSize,
+			Total:    count,
+		},
+	})
 }
 
 func (ctrl *ItemController) RegisterRoutes(rg *gin.RouterGroup) {
