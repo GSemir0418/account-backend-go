@@ -431,4 +431,21 @@ debug 配置
 注意中间件的声明位置，要在所有路由之前Use
 
 item 分页
-取出参数使用c.Params.Get("xxx") 而不是绑定json请求体了
+- 取出参数使用c.Request.URL.Query() 而不是绑定json请求体了
+query := c.Request.URL.Query()
+记得要先判断query["page"]切片是否有值
+pageStr := query["page"][0]
+因为是从url取参数 所以不需要定义struct了
+- 使用 nav-inc/datetime 以支持 ISO8601 格式的时间解析
+datetime.Parse(happenedBeforeStr, time.Local)
+- 使用 sqlc.arg(happened_after) 为生成的函数参数命名，否则自动命名很难用
+SELECT * from items
+WHERE happened_at >= sqlc.arg(happened_after) AND happened_at < sqlc.arg(happened_before)
+ORDER BY happened_at DESC ;
+- 构造请求时，ISO8601 中的 + 会被转译，因此要使用url.QueryEscape包一下
+req, _ := http.NewRequest(
+		"GET",
+		"/api/v1/items/balance?happened_after="+url.QueryEscape("2020-01-01T00:00:00+0800")+
+			"&happened_before="+url.QueryEscape("2020-01-02T00:00:00+0800"),
+		nil,
+	)

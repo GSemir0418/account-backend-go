@@ -25,3 +25,8 @@ SELECT count(*) FROM items;
 
 -- name: DeleteAllItems :exec
 DELETE FROM items;
+
+-- name: ListItemsHappenedBetween :many
+SELECT * from items
+WHERE happened_at >= sqlc.arg(happened_after) AND happened_at < sqlc.arg(happened_before)
+ORDER BY happened_at DESC;
