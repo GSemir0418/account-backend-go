@@ -102,7 +102,7 @@ func TestPagedItems(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest(
 		"GET",
-		"/api/v1/items",
+		"/api/v1/items?page=3&page_size=5",
 		nil,
 	)
 
@@ -110,7 +110,7 @@ func TestPagedItems(t *testing.T) {
 	u, _ := q.CreateUser(c, "1@qq.com")
 	logIn(t, u.ID, req)
 
-	for i := 0; i < int(20); i++ {
+	for i := 0; i < int(13); i++ {
 		if _, err := q.CreateItem(c, queries.CreateItemParams{
 			UserID:     u.ID,
 			Amount:     10000,
@@ -128,5 +128,5 @@ func TestPagedItems(t *testing.T) {
 	if err := json.Unmarshal([]byte(w.Body.String()), &resBody); err != nil {
 		t.Error("json.Unmarshal fail", err)
 	}
-	assert.Equal(t, 10, len(resBody.Resources))
+	assert.Equal(t, 3, len(resBody.Resources))
 }

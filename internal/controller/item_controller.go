@@ -90,8 +90,9 @@ func (ctrl *ItemController) Destory(c *gin.Context) {
 //	@Failure	500				{string}	string	服务器繁忙
 //	@Router		/api/v1/items [get]
 func (ctrl *ItemController) GetPaged(c *gin.Context) {
+	query := c.Request.URL.Query()
 	var params api.GetPagedItemsRequest
-	pageStr, _ := c.Params.Get("page")
+	pageStr := query["page"][0]
 	if page, err := strconv.Atoi(pageStr); err == nil {
 		params.Page = int32(page)
 	}
@@ -99,7 +100,7 @@ func (ctrl *ItemController) GetPaged(c *gin.Context) {
 	if params.Page == 0 {
 		params.Page = 1
 	}
-	pageSizeStr, _ := c.Params.Get("page_size")
+	pageSizeStr := query["page_size"][0]
 	if pageSize, err := strconv.Atoi(pageSizeStr); err == nil {
 		params.PageSize = int32(pageSize)
 	}
@@ -123,7 +124,7 @@ func (ctrl *ItemController) GetPaged(c *gin.Context) {
 
 	q := database.NewQuery()
 	items, err := q.ListItems(c, queries.ListItemsParams{
-		Offset: (params.Page - 1) * params.Page,
+		Offset: (params.Page - 1) * params.PageSize,
 		Limit:  params.PageSize,
 	})
 	if err != nil {
