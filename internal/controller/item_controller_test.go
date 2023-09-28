@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"account/api"
 	queries "account/config/sqlc"
 	"account/internal/jwt_helper"
 	"encoding/json"
@@ -91,4 +92,41 @@ func TestItemControllerWithUser(t *testing.T) {
 		t.Error("json.Unmarshal fail", err)
 	}
 	assert.Equal(t, u.ID, resBody.Resource.UserID)
+}
+
+func TestPagedItems(t *testing.T) {
+	cleanup := setUpTestCase(t)
+	defer cleanup(t)
+	ic := ItemController{}
+	ic.RegisterRoutes(r.Group("/api"))
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(
+		"GET",
+		"/api/v1/items",
+		nil,
+	)
+
+	// 登录
+	u, _ := q.CreateUser(c, "1@qq.com")
+	logIn(t, u.ID, req)
+
+	for i := 0; i < int(20); i++ {
+		if _, err := q.CreateItem(c, queries.CreateItemParams{
+			UserID:     u.ID,
+			Amount:     10000,
+			Kind:       "expenses",
+			TagIds:     []int32{1},
+			HappenedAt: time.Now(),
+		}); err != nil {
+			t.Error(err)
+		}
+	}
+
+	r.ServeHTTP(w, req)
+	assert.Equal(t, 200, w.Code)
+	var resBody api.GetPagesItemsResponse
+	if err := json.Unmarshal([]byte(w.Body.String()), &resBody); err != nil {
+		t.Error("json.Unmarshal fail", err)
+	}
+	assert.Equal(t, 10, len(resBody.Resources))
 }

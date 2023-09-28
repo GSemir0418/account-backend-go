@@ -108,7 +108,7 @@ func (ctrl *ItemController) GetPaged(c *gin.Context) {
 	q := database.NewQuery()
 	items, err := q.ListItems(c, queries.ListItemsParams{
 		Offset: (params.Page - 1) * params.Page,
-		Limit:  params.Page,
+		Limit:  params.PageSize,
 	})
 	if err != nil {
 		c.String(http.StatusInternalServerError, "服务器繁忙")
@@ -133,4 +133,5 @@ func (ctrl *ItemController) RegisterRoutes(rg *gin.RouterGroup) {
 	v1 := rg.Group("v1")
 	// 注册路由
 	v1.POST("/items", ctrl.Create)
+	v1.GET("/items", ctrl.GetPaged)
 }
