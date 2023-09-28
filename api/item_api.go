@@ -23,7 +23,7 @@ type GetPagedItemsRequest struct {
 	HappenedBefore time.Time `json:"happened_before"`
 }
 
-type GetPagesItemsResponse struct {
+type GetPagedItemsResponse struct {
 	Resources []queries.Item
 	Pager     Pager
 }

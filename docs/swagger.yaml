@@ -17,6 +17,24 @@ definitions:
       resource:
         $ref: '#/definitions/queries.User'
     type: object
+  api.GetPagedItemsResponse:
+    properties:
+      pager:
+        $ref: '#/definitions/api.Pager'
+      resources:
+        items:
+          $ref: '#/definitions/queries.Item'
+        type: array
+    type: object
+  api.Pager:
+    properties:
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
   queries.Item:
     properties:
       amount:
@@ -67,6 +85,42 @@ info:
   title: 记账
 paths:
   /api/v1/items:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 页码
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 每页条数
+        example: 1
+        in: query
+        name: page_size
+        type: integer
+      - description: 开始时间
+        in: query
+        name: happened_after
+        type: string
+      - description: 结束时间
+        in: query
+        name: happened_before
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.GetPagedItemsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 分页获取账目
     post:
       consumes:
       - application/json

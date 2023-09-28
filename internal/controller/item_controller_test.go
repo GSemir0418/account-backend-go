@@ -124,7 +124,7 @@ func TestPagedItems(t *testing.T) {
 
 	r.ServeHTTP(w, req)
 	assert.Equal(t, 200, w.Code)
-	var resBody api.GetPagesItemsResponse
+	var resBody api.GetPagedItemsResponse
 	if err := json.Unmarshal([]byte(w.Body.String()), &resBody); err != nil {
 		t.Error("json.Unmarshal fail", err)
 	}

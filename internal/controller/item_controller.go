@@ -28,7 +28,7 @@ func (ctrl *ItemController) Get(c *gin.Context) {
 //	@Param		amount		body		int				true	"金额（单位：分）"	example(100)
 //	@Param		kind		body		queries.Kind	true	"类型"		example(expenses)
 //	@Param		happened_at	body		string			true	"发生时间"		example(2023-09-26T00:00:00Z)
-//	@Param		tag_ids		body		[]int		true	"标签ID列表"	example([1,2,3])
+//	@Param		tag_ids		body		[]int			true	"标签ID列表"	example([1,2,3])
 //
 //	@Success	200			{object}	api.CreateItemResponse
 //	@Failure	401			{string}	string	无效的JWT
@@ -73,6 +73,22 @@ func (ctrl *ItemController) Destory(c *gin.Context) {
 	panic("not implemented") // TODO: Implement
 }
 
+// GetPagedItems
+//
+//	@Summary	分页获取账目
+//	@Accept		json
+//	@Produce	json
+//
+//	@Security	Bearer
+//
+//	@Param		page			query		int		false	"页码"	example(1)
+//	@Param		page_size		query		int		false	"每页条数"	example(1)
+//	@Param		happened_after	query		string	false	"开始时间"
+//	@Param		happened_before	query		string	false	"结束时间"
+//
+//	@Success	200				{object}	api.GetPagedItemsResponse
+//	@Failure	500				{string}	string	服务器繁忙
+//	@Router		/api/v1/items [get]
 func (ctrl *ItemController) GetPaged(c *gin.Context) {
 	var params api.GetPagedItemsRequest
 	pageStr, _ := c.Params.Get("page")
@@ -119,7 +135,7 @@ func (ctrl *ItemController) GetPaged(c *gin.Context) {
 		c.String(http.StatusInternalServerError, "服务器繁忙")
 		return
 	}
-	c.JSON(http.StatusOK, api.GetPagesItemsResponse{
+	c.JSON(http.StatusOK, api.GetPagedItemsResponse{
 		Resources: items,
 		Pager: api.Pager{
 			Page:     params.Page,
