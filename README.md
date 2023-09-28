@@ -385,6 +385,8 @@ queries/items.sql 写创建方法
 6 断言
 
 文档格式
+注意要紧贴控制器方法 中间不要有空行
+且注释中间也不能有空行 要使用空的//相连
 // CreateItem
 //
 //	@Summary	创建账目
@@ -398,4 +400,32 @@ queries/items.sql 写创建方法
 //	@Failure	422			{string}	string	参数错误
 //	@Router		/api/v1/items [post]
 
+支持 JWT 测试：
+在main中
+//	@securityDefinitions.apiKey	Bearer
+//	@in							header
+//	@name						Authorization
+在需要权限的文档加上：能自动带上 Authorizition 请求头
+//	@Security	Bearer
 
+之后我们在测试前获取到validationCode 然后访问session接口，将返回的 jwt 保存在 文档上方 Authorize 的位置（别忘 Bearer ） 需要权限的接口就会自动携带这个全局 jwt 来请求了
+
+
+bug 修复！花了一下午！！！
+debug 配置
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Go Debug",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}",
+      "args": [
+        "server"
+      ]
+    }
+  ]
+}
+注意中间件的声明位置，要在所有路由之前Use

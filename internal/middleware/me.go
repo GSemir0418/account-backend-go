@@ -56,9 +56,6 @@ func getMe(c *gin.Context) (queries.User, error) {
 	if !ok {
 		return user, fmt.Errorf("无效的jwt")
 	}
-	if err != nil {
-		return user, fmt.Errorf("无效的jwt")
-	}
 	q := database.NewQuery()
 	u, err := q.FindUser(c, int32(userID))
 	if err != nil {

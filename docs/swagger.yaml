@@ -5,6 +5,13 @@ definitions:
       resource:
         $ref: '#/definitions/queries.Item'
     type: object
+  api.CreateSessionResponse:
+    properties:
+      jwt:
+        type: string
+      user_id:
+        type: integer
+    type: object
   api.GetMeResponse:
     properties:
       resource:
@@ -50,9 +57,6 @@ definitions:
       updated_at:
         type: string
     type: object
-externalDocs:
-  description: OpenAPI
-  url: https://swagger.io/resources/open-api/
 host: localhost:8080
 info:
   contact:
@@ -89,13 +93,12 @@ paths:
         schema:
           type: string
       - description: 标签ID列表
-        example: '[1,2,3]'
         in: body
         name: tag_ids
         required: true
         schema:
           items:
-            type: string
+            type: integer
           type: array
       produces:
       - application/json
@@ -112,6 +115,8 @@ paths:
           description: Unprocessable Entity
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: 创建账目
   /api/v1/me:
     get:
@@ -128,7 +133,67 @@ paths:
           description: Unauthorized
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: 获取当前登录用户
+  /api/v1/session:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 邮件地址
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: 验证码
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.CreateSessionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 登录
+  /api/v1/validation_codes:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 邮件地址
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: 请求发送验证码
   /ping:
     get:
       consumes:
@@ -143,6 +208,8 @@ paths:
           description: Internal Server Error
       summary: 服务健康度
 securityDefinitions:
-  BasicAuth(JWT):
-    type: basic
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

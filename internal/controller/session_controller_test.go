@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"account/api"
 	queries "account/config/sqlc"
 	"encoding/json"
 	"fmt"
@@ -52,10 +53,7 @@ func TestSession(t *testing.T) {
 	// 发送请求
 	r.ServeHTTP(w, req)
 	// 测试 resBody 中有 jwt
-	var resBody struct {
-		JWT    string `json:"jwt"`
-		UserID int32  `json:"userId"`
-	}
+	var resBody api.CreateSessionResponse
 	fmt.Println("JWT==========")
 	fmt.Println(w.Body.String())
 	if err := json.Unmarshal(w.Body.Bytes(), &resBody); err != nil {

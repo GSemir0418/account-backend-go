@@ -15,6 +15,9 @@ type MeController struct{}
 //	@Summary	获取当前登录用户
 //	@Accept		json
 //	@Produce	json
+//
+//	@Security	Bearer
+//
 //	@Success	200	{object}	api.GetMeResponse
 //	@Failure	401	{string}	string	无效的JWT
 //	@Router		/api/v1/me [get]

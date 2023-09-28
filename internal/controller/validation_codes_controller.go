@@ -13,6 +13,18 @@ import (
 
 type ValidationCodeController struct{}
 
+// CreateValidationCode
+//
+//	@Summary	请求发送验证码
+//	@Accept		json
+//	@Produce	json
+//
+//	@Param		email	body	string	true	"邮件地址"
+//
+//	@Success	200
+//	@Failure	400	{string}	string	无效的邮件地址
+//	@Failure	500	{string}	string	服务器错误
+//	@Router		/api/v1/validation_codes [post]
 func (ctrl *ValidationCodeController) Create(c *gin.Context) {
 	var body struct {
 		Email string `json:"email"`
