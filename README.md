@@ -451,4 +451,18 @@ req, _ := http.NewRequest(
 	)
 
 ## 开发 tags api
-
+0. 先过一遍测试用例
+go test ./...
+1. 创建 controller 文件与 test 文件,router 注册路由
+ctrl shift p go stubs
+输入: ctrl *TagController account/internal/controller.Controller
+2. 创建数据库迁移文件 
+go build .; ./account db migrate:create create_tags_table
+写上升降级的代码，同步数据库
+go build .; ./account db migrate:up
+3. 复制建表语句到 config/schema.sql以供sqlc生成model代码
+sqlc generate
+4. 声明 api 出入参类型
+5. 写创建 tag 的 sql 语句
+6. 写 controller
+7. 测试
