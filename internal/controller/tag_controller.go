@@ -34,9 +34,7 @@ func (ctrl *TagController) Create(c *gin.Context) {
 		c.String(500, err.Error())
 		return
 	}
-	c.JSON(200, gin.H{
-		"resource": tag,
-	})
+	c.JSON(200, api.CreateTagResponse{Resource: tag})
 }
 
 func (ctrl *TagController) Update(c *gin.Context) {
