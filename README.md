@@ -466,3 +466,24 @@ sqlc generate
 5. 写创建 tag 的 sql 语句
 6. 写 controller
 7. 测试
+8. 生成文档
+报错：Error parsing type definition 'queries.Tag': cannot find type definition: sql.NullTime
+因为 deleted_at 字段在数据库中是一个可以为null的时间戳
+而 go 语言的 time.Time 是一个结构体，永远不会为null
+为了表示null，database/sql 库提供了 NullTime类型
+type NullTime struct {
+    Time  time.Time
+    Valid bool // Valid is true if Time is not NULL
+}
+在使用 swag init 命令时要加上 --parseDependency，能够解析依赖的类型
+但这与我们的要求不一致
+搜索 sqlc overwrite null type
+sqlc.yaml加上如下配置
+overrides:
+        - db_type: "pg_catalog.timestamp"
+          go_type:
+            import: "time"
+            type: "Time"
+            pointer: true
+          nullable: true
+使得 deleted_at 字段在go中的类型为 *time.Time 指针，指针是可以为 空值的

@@ -9,3 +9,10 @@ sql:
         json_tags_case_style: snake
         package: "queries"
         out: "config/sqlc"
+        overrides:
+        - db_type: "pg_catalog.timestamp"
+          go_type:
+            import: "time"
+            type: "Time"
+            pointer: true
+          nullable: true

@@ -12,6 +12,11 @@ definitions:
       user_id:
         type: integer
     type: object
+  api.CreateTagResponse:
+    properties:
+      resource:
+        $ref: '#/definitions/queries.Tag'
+    type: object
   api.GetMeResponse:
     properties:
       resource:
@@ -64,6 +69,25 @@ definitions:
     x-enum-varnames:
     - KindExpenses
     - KindInCome
+  queries.Tag:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      kind:
+        $ref: '#/definitions/queries.Kind'
+      name:
+        type: string
+      sign:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
   queries.User:
     properties:
       created_at:
@@ -223,6 +247,50 @@ paths:
           schema:
             type: string
       summary: 登录
+  /api/v1/tags:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 金额（单位：分）
+        example: 通勤
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: 类型
+        example: expenses
+        in: body
+        name: kind
+        required: true
+        schema:
+          type: string
+      - description: 符号
+        example: "\U0001F608"
+        in: body
+        name: sign
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.CreateTagResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "422":
+          description: Unprocessable Entity
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 创建标签
   /api/v1/validation_codes:
     post:
       consumes:

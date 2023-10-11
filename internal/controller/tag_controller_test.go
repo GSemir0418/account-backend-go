@@ -78,4 +78,5 @@ func TestTagCreateWithUser(t *testing.T) {
 	}
 	assert.Equal(t, u.ID, resBody.Resource.UserID)
 	assert.Equal(t, "test", resBody.Resource.Name)
+	assert.Nil(t, resBody.Resource.DeletedAt)
 }

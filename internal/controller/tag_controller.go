@@ -15,6 +15,22 @@ func (ctrl *TagController) Get(c *gin.Context) {
 	panic("not implemented") // TODO: Implement
 }
 
+// CreateTag
+//
+//	@Summary	创建标签
+//	@Accept		json
+//	@Produce	json
+//
+//	@Security	Bearer
+//
+//	@Param		name		body		string				true	"金额（单位：分）"	example(通勤)
+//	@Param		kind		body		queries.Kind	true	"类型"		example(expenses)
+//	@Param		sign	body		string			true	"符号"		example(😈)
+//
+//	@Success	200			{object}	api.CreateTagResponse
+//	@Failure	401			{string}	string	无效的JWT
+//	@Failure	422			{string}	string	参数错误
+//	@Router		/api/v1/tags [post]
 func (ctrl *TagController) Create(c *gin.Context) {
 	var reqBody api.CreateTagRequest
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
