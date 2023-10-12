@@ -51,3 +51,44 @@ func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (Tag, erro
 	)
 	return i, err
 }
+
+const updateTag = `-- name: UpdateTag :one
+UPDATE tags  
+SET 
+  user_id = $2,
+  name = $3,
+  sign = $4,
+  kind = $5
+WHERE id = $1
+RETURNING id, user_id, name, sign, kind, deleted_at, created_at, updated_at
+`
+
+type UpdateTagParams struct {
+	ID     int32  `json:"id"`
+	UserID int32  `json:"user_id"`
+	Name   string `json:"name"`
+	Sign   string `json:"sign"`
+	Kind   Kind   `json:"kind"`
+}
+
+func (q *Queries) UpdateTag(ctx context.Context, arg UpdateTagParams) (Tag, error) {
+	row := q.db.QueryRowContext(ctx, updateTag,
+		arg.ID,
+		arg.UserID,
+		arg.Name,
+		arg.Sign,
+		arg.Kind,
+	)
+	var i Tag
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Name,
+		&i.Sign,
+		&i.Kind,
+		&i.DeletedAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}

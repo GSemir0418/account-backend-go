@@ -487,3 +487,5 @@ overrides:
             pointer: true
           nullable: true
 使得 deleted_at 字段在go中的类型为 *time.Time 指针，指针是可以为 空值的
+
+controller 主要负责控制下类型 处理报错 取接口数据 全扔给sqlc

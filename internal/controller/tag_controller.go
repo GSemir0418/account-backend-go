@@ -4,6 +4,7 @@ import (
 	"account/api"
 	queries "account/config/sqlc"
 	"account/internal/database"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -54,7 +55,32 @@ func (ctrl *TagController) Create(c *gin.Context) {
 }
 
 func (ctrl *TagController) Update(c *gin.Context) {
-	panic("not implemented") // TODO: Implement
+	var reqBody api.UpdateTagRequest
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.String(422, "参数错误")
+		return
+	}
+	idString, _ := c.Params.Get("id")
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		c.String(422, "参数错误")
+		return
+	}
+	me, _ := c.Get("me")
+	user, _ := me.(queries.User)
+	q := database.NewQuery()
+	tag, err := q.UpdateTag(c, queries.UpdateTagParams{
+		ID:     int32(id),
+		Kind:   reqBody.Kind,
+		Name:   reqBody.Name,
+		Sign:   reqBody.Sign,
+		UserID: user.ID,
+	})
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+	c.JSON(200, api.UpdateTagResponse{Resource: tag})
 }
 
 func (ctrl *TagController) Find(c *gin.Context) {
@@ -72,4 +98,5 @@ func (ctrl *TagController) GetPaged(c *gin.Context) {
 func (ctrl *TagController) RegisterRoutes(rg *gin.RouterGroup) {
 	v1 := rg.Group("/v1")
 	v1.POST("/tags", ctrl.Create)
+	v1.PATCH("/tags/:id", ctrl.Update)
 }
