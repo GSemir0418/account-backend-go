@@ -26,7 +26,10 @@ func setUpTestCase(t *testing.T) func(t *testing.T) {
 	database.Connect()
 	q = database.NewQuery()
 	// 初始化 gin 服务器
-	r = gin.Default()
+	gin.SetMode(gin.ReleaseMode)
+	// r = gin.Default()
+	r = gin.New()
+	r.Use(gin.Recovery())
 	// 应用中间件
 	r.Use(middleware.Me([]string{"/swagger", "/api/v1/session", "/api/v1/validation_codes", "/ping"}))
 	// 默认上下文

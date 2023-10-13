@@ -489,3 +489,24 @@ overrides:
 使得 deleted_at 字段在go中的类型为 *time.Time 指针，指针是可以为 空值的
 
 controller 主要负责控制下类型 处理报错 取接口数据 全扔给sqlc
+
+目前测试未通过时，控制台输出的信息过多，不方便debug
+造成该现象的原因：gin的logger中间件 和 debug模式
+把gin框架的logger中间件删掉
+进入gin.Default的源码，会发现Default会使用两个中间件
+engine.Use(Logger(), Recovery())
+按照源码的流程写一遍，不使用logger即可
+将debug模式改为release模式（log中有相关提示）
+
+小问题
+在items controller 中，我们需要在查询参数中取happened_after属性
+之前是在 query 对象中取的，并对数组越界异常进行了处理
+query := c.Request.URL.Query()
+	if len(query["happened_after"]) > 0 {
+		happenedAfterStr := query["happened_after"][0]
+		pt, err := datetime.Parse(happenedAfterStr, time.Local)
+		if err == nil {
+			happenedAfter = pt
+		}
+	}
+其实用query.Get()就可以解决

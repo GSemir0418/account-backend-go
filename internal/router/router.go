@@ -31,7 +31,10 @@ func New() *gin.Engine {
 	// 连接数据库
 	database.Connect()
 	// 创建路由
-	r := gin.Default()
+	// r := gin.Default()
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.New()
+	r.Use(gin.Recovery())
 	// 应用中间件
 	r.Use(middleware.Me([]string{"/swagger", "/api/v1/session", "/api/v1/validation_codes", "/ping"}))
 	// 注册路由

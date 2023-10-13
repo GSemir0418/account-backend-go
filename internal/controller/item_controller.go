@@ -69,23 +69,16 @@ func (ctrl *ItemController) Update(c *gin.Context) {
 }
 
 func (ctrl *ItemController) GetBanlance(c *gin.Context) {
-	happenedAfter := time.Now().AddDate(-100, 0, 0)
-	happenedBefore := time.Now().AddDate(1, 0, 0)
-
 	query := c.Request.URL.Query()
-	if len(query["happened_after"]) > 0 {
-		happenedAfterStr := query["happened_after"][0]
-		pt, err := datetime.Parse(happenedAfterStr, time.Local)
-		if err == nil {
-			happenedAfter = pt
-		}
+	happenedAfterStr := query.Get("happened_after")
+	happenedBeforeStr := query.Get("happened_before")
+	happenedAfter, err := datetime.Parse(happenedAfterStr, time.Local)
+	if err != nil {
+		happenedAfter = time.Now().AddDate(-100, 0, 0)
 	}
-	if len(query["happened_before"]) > 0 {
-		happenedBeforeStr := query["happened_before"][0]
-		pt, err := datetime.Parse(happenedBeforeStr, time.Local)
-		if err == nil {
-			happenedBefore = pt
-		}
+	happenedBefore, err := datetime.Parse(happenedBeforeStr, time.Local)
+	if err != nil {
+		happenedBefore = time.Now().AddDate(1, 0, 0)
 	}
 
 	q := database.NewQuery()
