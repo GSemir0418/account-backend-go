@@ -43,7 +43,7 @@ RETURNING id, user_id, amount, tag_ids, kind, happened_at, created_at, updated_a
 type CreateItemParams struct {
 	UserID     int32     `json:"user_id"`
 	Amount     int32     `json:"amount"`
-	Kind       Kind      `json:"kind"`
+	Kind       string    `json:"kind"`
 	HappenedAt time.Time `json:"happened_at"`
 	TagIds     []int32   `json:"tag_ids"`
 }

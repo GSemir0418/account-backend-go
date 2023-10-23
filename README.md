@@ -510,3 +510,9 @@ query := c.Request.URL.Query()
 		}
 	}
 其实用query.Get()就可以解决
+
+删除 kind 类型
+校验使用go来做，就不需要postgres的kind类型来限制了
+写一个 migration 来删除数据库的kind类型
+使用事务进行表配置的更改即类型的删除
+修改 schema.sql 重新生成 sqlc

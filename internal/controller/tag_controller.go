@@ -25,7 +25,7 @@ func (ctrl *TagController) Get(c *gin.Context) {
 //	@Security	Bearer
 //
 //	@Param		name		body		string				true	"金额（单位：分）"	example(通勤)
-//	@Param		kind		body		queries.Kind	true	"类型"		example(expenses)
+//	@Param		kind		body		string	true	"类型"		example(expenses)
 //	@Param		sign	body		string			true	"符号"		example(😈)
 //
 //	@Success	200			{object}	api.CreateTagResponse

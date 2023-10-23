@@ -105,7 +105,6 @@ func TestTagUpdateWithUser(t *testing.T) {
 
 	reqBody := gin.H{
 		"name": "newTest",
-		"kind": "in_come",
 		"sign": "👟",
 	}
 	bytes, _ := json.Marshal(reqBody)

@@ -27,7 +27,7 @@ RETURNING id, user_id, name, sign, kind, deleted_at, created_at, updated_at
 type CreateTagParams struct {
 	UserID int32  `json:"user_id"`
 	Sign   string `json:"sign"`
-	Kind   Kind   `json:"kind"`
+	Kind   string `json:"kind"`
 	Name   string `json:"name"`
 }
 
@@ -68,7 +68,7 @@ type UpdateTagParams struct {
 	UserID int32  `json:"user_id"`
 	Name   string `json:"name"`
 	Sign   string `json:"sign"`
-	Kind   Kind   `json:"kind"`
+	Kind   string `json:"kind"`
 }
 
 func (q *Queries) UpdateTag(ctx context.Context, arg UpdateTagParams) (Tag, error) {

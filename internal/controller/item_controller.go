@@ -94,10 +94,10 @@ func (ctrl *ItemController) GetBanlance(c *gin.Context) {
 	// 计算返回值
 	var r api.GetBalanceResponse
 	for _, item := range items {
-		if item.Kind == queries.KindInCome {
+		if item.Kind == "in_come" {
 			r.Income += int(item.Amount)
 		}
-		if item.Kind == queries.KindExpenses {
+		if item.Kind == "expenses" {
 			r.Expenses += int(item.Amount)
 		}
 	}
