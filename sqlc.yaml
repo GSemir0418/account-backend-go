@@ -16,3 +16,9 @@ sql:
             type: "Time"
             pointer: true
           nullable: true
+        - db_type: "pg_catalog.varchar"
+          nullable: true
+          go_type:
+            import: "gopkg.in/guregu/null.v4"
+            type: "String"
+            pointer: false

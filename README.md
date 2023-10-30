@@ -516,3 +516,60 @@ query := c.Request.URL.Query()
 写一个 migration 来删除数据库的kind类型
 使用事务进行表配置的更改即类型的删除
 修改 schema.sql 重新生成 sqlc
+
+go更新数据库常见问题
+如果在更新数据时，某字段传了空字符串""，那么要不要覆盖原有数据
+声明接口类型时，指定了某字段（例如）类型为 string，且不能为空
+所以即使不传这个字段，go 会将该字段赋值为 ""
+这时会导致调用更新接口时，不仅要传更新的字段，也要将剩余字段传回给 go，否则 go 会使用 "" 覆盖掉初始值
+- 方案一 在sql语句中使用CASE WHEN THEN忽略空字符串的情况
+UPDATE tags SET sign = CASE WHEN @sign = '' THEN sign ELSE @sign END WHERE id = @id RETURNING *;
+方案一可以解决必填字符串类型字段的问题
+```
+- name: UpdateTag :one
+UPDATE tags  
+SET 
+  user_id = @user_id,
+  name = CASE WHEN @name::varchar = '' THEN name ELSE @name END,
+  sign = CASE WHEN @sign::varchar = '' THEN sign ELSE @sign END,
+  kind = CASE WHEN @kind::varchar = '' THEN kind ELSE @kind END
+WHERE id = @id
+RETURNING id, user_id, name, sign, kind, deleted_at, created_at, updated_at;
+```
+
+声明接口类型时，指定了某字段类型为 string，同时可以为空
+此时传 nil 表示不更新该字段，传 "" 表示将字段更新为空字符串
+- 方案二 使用 NullString 类型
+当声明数据库的 schema 时，某字段类型为 VARCHAR(100) 没有 NOT NULL 关键字
+在 sqlc 生成的 go 代码中，该字段的类型会被指定为 sql.NullString 而不是 string
+type NullString struct {
+  String string
+  Valid bool // Valid is true if String is not NULL
+}
+NullString 类型是一个结构体，导致该字段会在响应体中变成一个对象返回给前端，而且在请求体中也要将该字段作为对象传回来
+完全不符合我们的开发使用习惯
+
+- 方案二改进 重写 NullString 类型
+重写 NullString 类型主要是重写结构体的序列化和反序列化方法：MarshalJSON UnmarshalJSON；数据库读写方法：Scan 和 Value
+然后修改 sqlc 配置，指定 varchar 类型非空时的类型为我们重写的 MyNullString 即可
+其实也可以让 MyNullString 继承 sql.NullString
+
+- 方案三 使用 *string
+可以在 sqlc 的配置中将 varchar 类型非空的字段指定为字符串的指针类型（pointer: true）
+如果不传值（或传 null），那么 go 会默认变成 nil（null）
+如果传空字符串，那么 go 会默认变成空字符串
+麻烦的点在于，如果要在go中使用这个字段的值，需要提前进行判空处理（因为指针为空时，取值会报错）
+
+- 方案四 使用 null 库
+go get gopkg.in/guregu/null.v4
+```
+- db_type: "pg_catalog.varchar"
+          nullable: true
+          go_type:
+            import: "gopkg.in/guregu/null.v4"
+            type: "String"
+            pointer: false
+```
+修改api出入参类型为 null.String
+注意使用时要判断结构体的数据而不是直接作为字符串判断
+assert.Equal(t, "xxx", j.Resource.X.String)
