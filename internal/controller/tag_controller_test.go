@@ -133,5 +133,6 @@ func TestTagUpdateWithUser(t *testing.T) {
 	assert.Equal(t, u.ID, resBody.Resource.UserID)
 	assert.Equal(t, "newTest", resBody.Resource.Name)
 	assert.Equal(t, "👟", resBody.Resource.Sign)
+	assert.Equal(t, "in_come", resBody.Resource.Kind)
 	assert.Nil(t, resBody.Resource.DeletedAt)
 }

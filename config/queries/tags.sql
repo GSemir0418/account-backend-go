@@ -15,9 +15,9 @@ RETURNING *;
 -- name: UpdateTag :one
 UPDATE tags  
 SET 
-  user_id = $2,
-  name = $3,
-  sign = $4,
-  kind = $5
-WHERE id = $1
+  user_id = @user_id,
+  name = CASE WHEN @name::varchar = '' THEN name ELSE @name END,
+  sign = CASE WHEN @sign::varchar = '' THEN sign ELSE @sign END,
+  kind = CASE WHEN @kind::varchar = '' THEN kind ELSE @kind END
+WHERE id = @id
 RETURNING id, user_id, name, sign, kind, deleted_at, created_at, updated_at;
