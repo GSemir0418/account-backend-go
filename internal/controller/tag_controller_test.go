@@ -136,3 +136,42 @@ func TestTagUpdateWithUser(t *testing.T) {
 	assert.Equal(t, "in_come", resBody.Resource.Kind)
 	assert.Nil(t, resBody.Resource.DeletedAt)
 }
+
+func TestTagDelete(t *testing.T) {
+	cleanup := setUpTestCase(t)
+	defer cleanup(t)
+
+	tc := TagController{}
+	tc.RegisterRoutes(r.Group("/api"))
+
+	w := httptest.NewRecorder()
+
+	u, _ := q.CreateUser(c, "1@qq.com")
+	tag, err := q.CreateTag(c, queries.CreateTagParams{
+		Kind:   "in_come",
+		Name:   "testDelete",
+		Sign:   "😈",
+		UserID: u.ID,
+	})
+	if err != nil {
+		log.Fatalln(err)
+		return
+	}
+
+	req, _ := http.NewRequest(
+		"DELETE",
+		fmt.Sprintf("/api/v1/tags/%d", tag.ID),
+		nil,
+	)
+
+	auth, err := jwt_helper.GenerateJWT(int(u.ID))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	req.Header = http.Header{
+		"Authorization": []string{"Bearer " + auth},
+	}
+
+	r.ServeHTTP(w, req)
+	assert.Equal(t, 200, w.Code)
+}

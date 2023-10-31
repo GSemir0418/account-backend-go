@@ -4,6 +4,7 @@ import (
 	"account/api"
 	queries "account/config/sqlc"
 	"account/internal/database"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -88,7 +89,24 @@ func (ctrl *TagController) Find(c *gin.Context) {
 }
 
 func (ctrl *TagController) Destory(c *gin.Context) {
-	panic("not implemented") // TODO: Implement
+	idStr, bool := c.Params.Get("id")
+	if bool == false {
+		c.String(422, "参数错误")
+		return
+	}
+	// string 转 int
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.String(422, "参数错误")
+		return
+	}
+	q := database.NewQuery()
+	err = q.DeleteTag(c, int32(id))
+	if err != nil {
+		c.String(500, err.Error())
+		return
+	}
+	c.Status(http.StatusOK)
 }
 
 func (ctrl *TagController) GetPaged(c *gin.Context) {
@@ -99,4 +117,5 @@ func (ctrl *TagController) RegisterRoutes(rg *gin.RouterGroup) {
 	v1 := rg.Group("/v1")
 	v1.POST("/tags", ctrl.Create)
 	v1.PATCH("/tags/:id", ctrl.Update)
+	v1.DELETE("/tags/:id", ctrl.Destory)
 }

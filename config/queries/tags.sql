@@ -21,3 +21,9 @@ SET
   kind = CASE WHEN @kind::varchar = '' THEN kind ELSE @kind END
 WHERE id = @id
 RETURNING id, user_id, name, sign, kind, deleted_at, created_at, updated_at;
+
+-- name: DeleteTag :exec
+UPDATE tags 
+SET 
+  deleted_at = now()
+WHERE id = @id;

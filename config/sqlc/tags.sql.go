@@ -52,6 +52,18 @@ func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (Tag, erro
 	return i, err
 }
 
+const deleteTag = `-- name: DeleteTag :exec
+UPDATE tags 
+SET 
+  deleted_at = now()
+WHERE id = $1
+`
+
+func (q *Queries) DeleteTag(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deleteTag, id)
+	return err
+}
+
 const updateTag = `-- name: UpdateTag :one
 UPDATE tags  
 SET 

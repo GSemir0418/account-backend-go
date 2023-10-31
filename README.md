@@ -573,3 +573,5 @@ go get gopkg.in/guregu/null.v4
 修改api出入参类型为 null.String
 注意使用时要判断结构体的数据而不是直接作为字符串判断
 assert.Equal(t, "xxx", j.Resource.X.String)
+
+删除 Tag API
