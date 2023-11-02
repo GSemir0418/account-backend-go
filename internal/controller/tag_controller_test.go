@@ -212,3 +212,39 @@ func TestPagedTags(t *testing.T) {
 	}
 	assert.Equal(t, 3, len(resBody.Resources))
 }
+
+func TestGetTag(t *testing.T) {
+	cleanup := setUpTestCase(t)
+	defer cleanup(t)
+
+	it := TagController{}
+	it.RegisterRoutes(r.Group("/api"))
+
+	w := httptest.NewRecorder()
+	u, _ := q.CreateUser(c, "1@qq.com")
+
+	tag, err := q.CreateTag(c, queries.CreateTagParams{
+		UserID: u.ID,
+		Name:   "testGetOne",
+		Kind:   "expenses",
+	})
+	if err != nil {
+		t.Error(err)
+	}
+
+	req, _ := http.NewRequest(
+		"GET",
+		fmt.Sprintf("/api/v1/tags/%d", tag.ID),
+		nil,
+	)
+
+	logIn(t, u.ID, req)
+
+	r.ServeHTTP(w, req)
+	assert.Equal(t, 200, w.Code)
+	var resBody api.GetTagResponse
+	if err := json.Unmarshal([]byte(w.Body.String()), &resBody); err != nil {
+		t.Error("json.Unmarshal fail", err)
+	}
+	assert.Equal(t, "testGetOne", resBody.Resource.Name)
+}

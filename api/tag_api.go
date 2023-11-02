@@ -4,6 +4,9 @@ import (
 	queries "account/config/sqlc"
 )
 
+type GetTagResponse struct {
+	Resource queries.Tag
+}
 type GetPagedTagsRequest struct {
 	Page     int32  `json:"page"`
 	PageSize int32  `json:"page_size"`

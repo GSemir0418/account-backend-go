@@ -41,3 +41,7 @@ WHERE deleted_at IS NULL;
 
 -- name: DeleteAllTags :exec
 DELETE FROM tags;
+
+-- name: FindTag :one
+SELECT * FROM tags
+WHERE id = @id AND user_id = @user_id AND deleted_at IS NULL;
