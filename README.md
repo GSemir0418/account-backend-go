@@ -575,3 +575,9 @@ go get gopkg.in/guregu/null.v4
 assert.Equal(t, "xxx", j.Resource.X.String)
 
 删除 Tag API
+api定义的类型基本上就是sql语句所需的参数
+where kind = @kind 注意等号两边的空格
+offset和limit是关键字 不能使用 @offset和@limit 使用 $1..
+
+不能使用c.Params.GET()获取query string参数 只能获取路由的参数 例如:id
+改成c.Request.URL.Query().Get("page")

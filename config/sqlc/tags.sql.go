@@ -9,6 +9,18 @@ import (
 	"context"
 )
 
+const countTags = `-- name: CountTags :one
+SELECT count(*) FROM tags
+WHERE deleted_at IS NULL
+`
+
+func (q *Queries) CountTags(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countTags)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createTag = `-- name: CreateTag :one
 INSERT INTO tags (
   user_id,
@@ -52,6 +64,15 @@ func (q *Queries) CreateTag(ctx context.Context, arg CreateTagParams) (Tag, erro
 	return i, err
 }
 
+const deleteAllTags = `-- name: DeleteAllTags :exec
+DELETE FROM tags
+`
+
+func (q *Queries) DeleteAllTags(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, deleteAllTags)
+	return err
+}
+
 const deleteTag = `-- name: DeleteTag :exec
 UPDATE tags 
 SET 
@@ -62,6 +83,58 @@ WHERE id = $1
 func (q *Queries) DeleteTag(ctx context.Context, id int32) error {
 	_, err := q.db.ExecContext(ctx, deleteTag, id)
 	return err
+}
+
+const listTags = `-- name: ListTags :many
+SELECT id, user_id, name, sign, kind, deleted_at, created_at, updated_at FROM tags
+WHERE kind = $3 AND deleted_at IS NULL AND user_id = $4
+ORDER BY created_at
+OFFSET $1
+LIMIT $2
+`
+
+type ListTagsParams struct {
+	Offset int32  `json:"offset"`
+	Limit  int32  `json:"limit"`
+	Kind   string `json:"kind"`
+	UserID int32  `json:"user_id"`
+}
+
+func (q *Queries) ListTags(ctx context.Context, arg ListTagsParams) ([]Tag, error) {
+	rows, err := q.db.QueryContext(ctx, listTags,
+		arg.Offset,
+		arg.Limit,
+		arg.Kind,
+		arg.UserID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Tag
+	for rows.Next() {
+		var i Tag
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Name,
+			&i.Sign,
+			&i.Kind,
+			&i.DeletedAt,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const updateTag = `-- name: UpdateTag :one

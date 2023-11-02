@@ -110,7 +110,53 @@ func (ctrl *TagController) Destory(c *gin.Context) {
 }
 
 func (ctrl *TagController) GetPaged(c *gin.Context) {
-	panic("not implemented") // TODO: Implement
+	me, _ := c.Get("me")
+	user, ok := me.(queries.User)
+	if !ok {
+		c.Status(http.StatusUnauthorized)
+		return
+	}
+	var params api.GetPagedTagsRequest
+	params.Page = 1
+	params.PageSize = 10
+
+	pageStr := c.Request.URL.Query().Get("page")
+	if page, err := strconv.Atoi(pageStr); err == nil {
+		params.Page = int32(page)
+	}
+	pageSizeStr := c.Request.URL.Query().Get("page_size")
+	if pageSize, err := strconv.Atoi(pageSizeStr); err == nil {
+		params.PageSize = int32(pageSize)
+	}
+	kind, _ := c.Params.Get("kind")
+	if kind == "" {
+		kind = "expenses"
+	}
+
+	q := database.NewQuery()
+	tags, err := q.ListTags(c, queries.ListTagsParams{
+		Offset: (params.Page - 1) * params.PageSize,
+		Limit:  params.PageSize,
+		Kind:   kind,
+		UserID: user.ID,
+	})
+	if err != nil {
+		c.String(http.StatusInternalServerError, "服务器繁忙")
+		return
+	}
+	count, err := q.CountTags(c)
+	if err != nil {
+		c.String(http.StatusInternalServerError, "服务器繁忙")
+		return
+	}
+	c.JSON(http.StatusOK, api.GetPagedTagsResponse{
+		Resources: tags,
+		Pager: api.Pager{
+			Page:     params.Page,
+			PageSize: params.PageSize,
+			Total:    count,
+		},
+	})
 }
 
 func (ctrl *TagController) RegisterRoutes(rg *gin.RouterGroup) {
@@ -118,4 +164,5 @@ func (ctrl *TagController) RegisterRoutes(rg *gin.RouterGroup) {
 	v1.POST("/tags", ctrl.Create)
 	v1.PATCH("/tags/:id", ctrl.Update)
 	v1.DELETE("/tags/:id", ctrl.Destory)
+	v1.GET("/tags", ctrl.GetPaged)
 }

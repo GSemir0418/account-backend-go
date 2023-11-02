@@ -42,6 +42,10 @@ func setUpTestCase(t *testing.T) func(t *testing.T) {
 	if err := q.DeleteAllItems(c); err != nil {
 		t.Fatal(err)
 	}
+	// 清空 Tags 表
+	if err := q.DeleteAllTags(c); err != nil {
+		t.Fatal(err)
+	}
 	// 返回清理函数，开发者自行选择执行
 	return func(t *testing.T) {
 		database.Close()

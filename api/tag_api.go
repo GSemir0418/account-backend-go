@@ -4,6 +4,15 @@ import (
 	queries "account/config/sqlc"
 )
 
+type GetPagedTagsRequest struct {
+	Page     int32  `json:"page"`
+	PageSize int32  `json:"page_size"`
+	Kind     string `json:"kind"`
+}
+type GetPagedTagsResponse struct {
+	Resources []queries.Tag
+	Pager     Pager
+}
 type CreateTagRequest struct {
 	Name string `json:"name" binding:"required"`
 	Kind string `json:"kind" binding:"required"`
