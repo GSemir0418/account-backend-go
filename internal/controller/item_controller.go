@@ -187,10 +187,21 @@ func (ctrl *ItemController) GetPaged(c *gin.Context) {
 	})
 }
 
+func (ctrl *ItemController) GetSummary(c *gin.Context) {
+	var query api.GetSummaryRequest
+	err := c.BindQuery(&query)
+	if err != nil {
+		c.String(422, "参数错误")
+		return
+	}
+	c.Status(200)
+}
+
 func (ctrl *ItemController) RegisterRoutes(rg *gin.RouterGroup) {
 	v1 := rg.Group("v1")
 	// 注册路由
 	v1.POST("/items", ctrl.Create)
 	v1.GET("/items", ctrl.GetPaged)
 	v1.GET("/items/balance", ctrl.GetBanlance)
+	v1.GET("/items/summary", ctrl.GetSummary)
 }

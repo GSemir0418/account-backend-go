@@ -581,3 +581,9 @@ offset和limit是关键字 不能使用 @offset和@limit 使用 $1..
 
 不能使用c.Params.GET()获取query string参数 只能获取路由的参数 例如:id
 改成c.Request.URL.Query().Get("page")
+
+分组统计 api
+按天进行分组统计
+如果查询参数过多，可以使用c.BindQuery绑定api类型的结构体，注意结构体后面的注释要使用 form 而不是 json
+c.Bind 会通过 Content-Type 判断参数类型，从而确定使用 BindQuery 或者 BindJSON 来解析参数为go的结构体
+测试时我们需要构造的查询参数过长，也可以提前声明一个结构体
