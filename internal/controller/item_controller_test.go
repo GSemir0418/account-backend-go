@@ -254,8 +254,8 @@ func TestSummary(t *testing.T) {
 	qs := url.Values{
 		"happened_after":  []string{"2023-09-01T00:00:00+08:00"},
 		"happened_before": []string{"2023-10-31T00:00:00+08:00"},
-		"kind":            []string{"expenses"},
-		"group_by":        []string{"happened_at"},
+		// "kind":            []string{"expenses"},
+		"group_by": []string{"happened_at"},
 	}.Encode()
 
 	w := httptest.NewRecorder()
@@ -282,7 +282,7 @@ func TestSummary(t *testing.T) {
 	}
 
 	r.ServeHTTP(w, req)
-	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, 400, w.Code)
 
 	// body := w.Body.String()
 	// var j api.GetBalanceResponse

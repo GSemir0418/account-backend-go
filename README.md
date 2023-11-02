@@ -584,6 +584,19 @@ offset和limit是关键字 不能使用 @offset和@limit 使用 $1..
 
 分组统计 api
 按天进行分组统计
+测试时我们需要构造的查询参数过长，也可以提前声明url.Values结构体，通过Encode方法转换为字符串即可
 如果查询参数过多，可以使用c.BindQuery绑定api类型的结构体，注意结构体后面的注释要使用 form 而不是 json
 c.Bind 会通过 Content-Type 判断参数类型，从而确定使用 BindQuery 或者 BindJSON 来解析参数为go的结构体
-测试时我们需要构造的查询参数过长，也可以提前声明一个结构体
+ShouldBindWith报错后不会返回状态码 MustBindWith会直接返回状态码400 Bind源码使用的就是MustBindWith
+因此我们可以在Bind报错后，使用c.Writer.WriteString("参数错误")(Writer就相当于响应体)补充具体错误信息即可
+
+数据校验与错误处理
+在声明api请求与响应结构体类型时，后面的注释 `binding:"required"`表示此项在绑定结构体时为必填项
+如果没传 会触发BindQuery方法报错
+如何自定义报错信息呢，首先要想办法拿到错误的字段以及错误类型
+目前 error 的类型只是 error，无法区分其错误的类型 通过debug，看到error的类型是一个切片，并出现了 validator.ValidationErrors 字样
+于是访问这个包的官网 https://pkg.go.dev/github.com/go-playground/validator/v10#ValidationErrors
+go get github.com/go-playground/validator/v10
+import "github.com/go-playground/validator/v10"
+ValidationErrors 类型是 FieldError 的切片，用于验证后的自定义错误消息。
+明确了这个类型，我们可以通过 switch case 断言 error 的类型，遍历切片，通过 FieldError 提供的方法Tag()和Field()明确错误种类及报错的字段

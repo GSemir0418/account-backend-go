@@ -35,8 +35,8 @@ type GetBalanceResponse struct {
 }
 
 type GetSummaryRequest struct {
-	HappenedAfter  time.Time `form:"happened_after"`
-	HappenedBefore time.Time `form:"happened_before"`
-	Kind           string    `form:"kind"`
-	GroupBy        string    `form:"group_by"`
+	HappenedAfter  time.Time `form:"happened_after" binding:"required"`
+	HappenedBefore time.Time `form:"happened_before" binding:"required"`
+	Kind           string    `form:"kind" binding:"required"`
+	GroupBy        string    `form:"group_by" binding:"required"`
 }

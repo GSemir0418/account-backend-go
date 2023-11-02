@@ -4,11 +4,13 @@ import (
 	"account/api"
 	queries "account/config/sqlc"
 	"account/internal/database"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/nav-inc/datetime"
 
 	"github.com/gin-gonic/gin"
@@ -189,9 +191,17 @@ func (ctrl *ItemController) GetPaged(c *gin.Context) {
 
 func (ctrl *ItemController) GetSummary(c *gin.Context) {
 	var query api.GetSummaryRequest
-	err := c.BindQuery(&query)
-	if err != nil {
-		c.String(422, "参数错误")
+	if err := c.BindQuery(&query); err != nil {
+		errMsg := ""
+		switch e := err.(type) {
+		case validator.ValidationErrors:
+			for _, ve := range e {
+				errMsg = fmt.Sprintf("%s %s", ve.Field(), ve.Tag())
+			}
+			c.Writer.WriteString(errMsg)
+		default:
+			c.Writer.WriteString("参数错误")
+		}
 		return
 	}
 	c.Status(200)
