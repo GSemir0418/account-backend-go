@@ -252,9 +252,9 @@ func TestSummary(t *testing.T) {
 	ic.RegisterRoutes(r.Group("/api"))
 
 	qs := url.Values{
-		"happened_after":  []string{"2023-09-01T00:00:00+08:00"},
-		"happened_before": []string{"2023-10-31T00:00:00+08:00"},
-		// "kind":            []string{"expenses"},
+		// "happened_after":  []string{"2023-09-01T00:00:00+08:00"},
+		// "happened_before": []string{"2023-10-31T00:00:00+08:00"},
+		"kind":     []string{"xxx"},
 		"group_by": []string{"happened_at"},
 	}.Encode()
 
@@ -285,11 +285,11 @@ func TestSummary(t *testing.T) {
 	assert.Equal(t, 400, w.Code)
 
 	// body := w.Body.String()
-	// var j api.GetBalanceResponse
+	// var j api.ErrorResponse
 	// if err := json.Unmarshal([]byte(body), &j); err != nil {
 	// 	t.Error("json.Unmarshal fail", err)
 	// }
-	// assert.Equal(t, 10000*3, j.Expenses)
+	// assert.Equal(t, 3, len(j.Errors))
 	// assert.Equal(t, 10000*3, j.Income)
 	// assert.Equal(t, 0, j.Balance)
 }

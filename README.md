@@ -600,3 +600,31 @@ go get github.com/go-playground/validator/v10
 import "github.com/go-playground/validator/v10"
 ValidationErrors 类型是 FieldError 的切片，用于验证后的自定义错误消息。
 明确了这个类型，我们可以通过 switch case 断言 error 的类型，遍历切片，通过 FieldError 提供的方法Tag()和Field()明确错误种类及报错的字段
+
+除了 required，gin 还内置了其他校验规则，但 gin 文档中并未提及，说明此校验器并不是 gin 原生提供的
+通过查看BindQuery的源码，可以看到在绑定结构体时，会将数据直接交给validate(Validator.ValidateStruct)方法，而提供这个方法的正是我们刚才安装的validator包
+func (queryBinding) Bind(req *http.Request, obj any) error {
+	values := req.URL.Query()
+	if err := mapForm(obj, values); err != nil {
+		return err
+	}
+	return validate(obj)
+}
+gin 在某个时刻调用 validator.New()初始化了validator的实例
+来到 validator 包的官方文档，找到了所有内置的校验器
+https://pkg.go.dev/github.com/go-playground/validator/v10#readme-baked-in-validations
+
+针对 Kind 字段，只允许是某几个字符串（expenses, in_come）的其中一种，选择 oneof
+没有示例写法，可以搜索 validator oneof tag usage
+Kind  string  `form:"kind" binding:"required,oneof=expenses in_come"`
+以统计接口为例，设计JSON错误数据的结构：
+type ErrorResponse struct {
+	Errors map[string][]string `json:"errors"`
+}
+翻译成json
+{
+  errors: {
+    kind: ["oneof"],
+    happened_at: ["required"]
+  }
+}

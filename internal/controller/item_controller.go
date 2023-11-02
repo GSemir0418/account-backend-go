@@ -4,7 +4,6 @@ import (
 	"account/api"
 	queries "account/config/sqlc"
 	"account/internal/database"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -192,13 +191,21 @@ func (ctrl *ItemController) GetPaged(c *gin.Context) {
 func (ctrl *ItemController) GetSummary(c *gin.Context) {
 	var query api.GetSummaryRequest
 	if err := c.BindQuery(&query); err != nil {
-		errMsg := ""
+		er := api.ErrorResponse{Errors: map[string][]string{}}
 		switch e := err.(type) {
 		case validator.ValidationErrors:
 			for _, ve := range e {
-				errMsg = fmt.Sprintf("%s %s", ve.Field(), ve.Tag())
+				// 错误标签
+				tag := ve.Tag()
+				// 错误字段
+				field := ve.Field()
+				if er.Errors[field] == nil {
+					er.Errors[field] = []string{}
+				}
+				// 给该field的数组追加一项
+				er.Errors[field] = append(er.Errors[field], tag)
 			}
-			c.Writer.WriteString(errMsg)
+			c.JSON(http.StatusUnprocessableEntity, r)
 		default:
 			c.Writer.WriteString("参数错误")
 		}
