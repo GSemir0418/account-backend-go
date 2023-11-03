@@ -244,7 +244,7 @@ func TestBalanceWithTime(t *testing.T) {
 	assert.Equal(t, 0, j.Balance)
 }
 
-func TestSummary(t *testing.T) {
+func TestSummaryByHappenedAt(t *testing.T) {
 	cleanup := setUpTestCase(t)
 	defer cleanup(t)
 
@@ -296,7 +296,7 @@ func TestSummary(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 
 	body := w.Body.String()
-	var j api.GetSummaryResponse
+	var j api.GetSummaryByHappenedAtResponse
 	json.Unmarshal([]byte(body), &j)
 	assert.Equal(t, 60000, j.Total)
 	assert.Equal(t, 2, len(j.Groups))
@@ -304,4 +304,77 @@ func TestSummary(t *testing.T) {
 	// 测试排序 期待小的在前
 	assert.Equal(t, "2023-09-01", j.Groups[0].HappenedAt)
 	assert.Equal(t, "2023-09-02", j.Groups[1].HappenedAt)
+}
+
+func TestSummaryByTagID(t *testing.T) {
+	cleanup := setUpTestCase(t)
+	defer cleanup(t)
+
+	ic := ItemController{}
+	ic.RegisterRoutes(r.Group("/api"))
+
+	qs := url.Values{
+		"happened_after":  []string{"2023-09-01T00:00:00+08:00"},
+		"happened_before": []string{"2023-09-03T00:00:00+08:00"},
+		"kind":            []string{"expenses"},
+		"group_by":        []string{"tag_id"},
+	}.Encode()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(
+		"GET",
+		"/api/v1/items/summary?"+qs,
+		nil,
+	)
+
+	u, _ := q.CreateUser(c, "1@qq.com")
+	logIn(t, u.ID, req)
+	t1, _ := q.CreateTag(c, queries.CreateTagParams{
+		UserID: u.ID,
+		Sign:   "🏀",
+		Kind:   "expenses",
+		Name:   "testSummary1",
+	})
+	t2, _ := q.CreateTag(c, queries.CreateTagParams{
+		UserID: u.ID,
+		Sign:   "⚽️",
+		Kind:   "expenses",
+		Name:   "testSummary2",
+	})
+	for i := 0; i < 3; i++ {
+		d, _ := datetime.Parse("2023-09-01T00:00:00+08:00", time.Local)
+		if _, err := q.CreateItem(c, queries.CreateItemParams{
+			UserID:     u.ID,
+			Amount:     10000,
+			Kind:       "expenses",
+			TagIds:     []int32{t1.ID},
+			HappenedAt: d,
+		}); err != nil {
+			t.Error(err)
+		}
+	}
+	for i := 0; i < 3; i++ {
+		d, _ := datetime.Parse("2023-09-02T00:00:00+08:00", time.Local)
+		if _, err := q.CreateItem(c, queries.CreateItemParams{
+			UserID:     u.ID,
+			Amount:     10000,
+			Kind:       "expenses",
+			TagIds:     []int32{t2.ID},
+			HappenedAt: d,
+		}); err != nil {
+			t.Error(err)
+		}
+	}
+	r.ServeHTTP(w, req)
+	assert.Equal(t, 200, w.Code)
+
+	body := w.Body.String()
+	var j api.GetSummaryByTagIDResponse
+	json.Unmarshal([]byte(body), &j)
+	assert.Equal(t, 60000, j.Total)
+	assert.Equal(t, 2, len(j.Groups))
+	assert.Equal(t, 30000, j.Groups[0].Amount)
+	assert.Equal(t, t1.ID, j.Groups[0].TagID)
+	assert.Equal(t, t2.ID, j.Groups[1].TagID)
+	assert.Equal(t, "🏀", j.Groups[0].Tag.Sign)
 }

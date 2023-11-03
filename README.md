@@ -637,5 +637,5 @@ type ErrorResponse struct {
 分组就是for循环套for循环（还有没有更好的？）
 includes 的替代就是 for循环 + flag
 
-数据排序，其中 i,j 为索引
+数组排序，其中 i,j 为索引
 sort.Slice(r.Groups, func(i int, j int) bool {})

@@ -212,9 +212,6 @@ func (ctrl *ItemController) GetSummary(c *gin.Context) {
 		}
 		return
 	}
-	r := api.GetSummaryResponse{}
-	r.Groups = []api.SummaryGroupByHappenedAt{}
-	r.Total = 0
 
 	me, _ := c.Get("me")
 	user, _ := me.(queries.User)
@@ -232,29 +229,72 @@ func (ctrl *ItemController) GetSummary(c *gin.Context) {
 		return
 	}
 	// 按 happened_at 进行分组
-	for _, item := range items {
-		k := item.HappenedAt.Format("2006-01-02") // 相当于 yyyy-MM-dd
-		r.Total += int(item.Amount)
-		found := false
-		for index, group := range r.Groups {
-			if group.HappenedAt == k {
-				found = true
-				r.Groups[index].Amount += int(item.Amount)
+	if query.GroupBy == "happened_at" {
+		r := api.GetSummaryByHappenedAtResponse{}
+		r.Groups = []api.SummaryGroupByHappenedAt{}
+		r.Total = 0
+		for _, item := range items {
+			k := item.HappenedAt.Format("2006-01-02") // 相当于 yyyy-MM-dd
+			r.Total += int(item.Amount)
+			found := false
+			for index, group := range r.Groups {
+				if group.HappenedAt == k {
+					found = true
+					r.Groups[index].Amount += int(item.Amount)
+				}
+			}
+			if !found {
+				r.Groups = append(r.Groups, api.SummaryGroupByHappenedAt{
+					HappenedAt: k,
+					Amount:     int(item.Amount),
+				})
 			}
 		}
-		if !found {
-			r.Groups = append(r.Groups, api.SummaryGroupByHappenedAt{
-				HappenedAt: k,
-				Amount:     int(item.Amount),
-			})
-		}
-	}
-	// 对 group 按 happened_at 从前到后进行排序
-	sort.Slice(r.Groups, func(i int, j int) bool {
-		return r.Groups[i].HappenedAt < r.Groups[j].HappenedAt
-	})
+		// 对 group 按 happened_at 从前到后进行排序
+		sort.Slice(r.Groups, func(i int, j int) bool {
+			return r.Groups[i].HappenedAt < r.Groups[j].HappenedAt
+		})
 
-	c.JSON(200, r)
+		c.JSON(200, r)
+	} else {
+		// 按 tag_id 进行分组
+		r := api.GetSummaryByTagIDResponse{}
+		r.Groups = []api.SummaryGroupByTagID{}
+		r.Total = 0
+		for _, item := range items {
+			// 只取第一个 TagID
+			k := item.TagIds[0]
+			r.Total += int(item.Amount)
+			found := false
+			for index, group := range r.Groups {
+				if group.TagID == k {
+					found = true
+					r.Groups[index].Amount += int(item.Amount)
+				}
+			}
+			if !found {
+				t, err := q.FindTag(c, queries.FindTagParams{
+					ID:     k,
+					UserID: user.ID,
+				})
+				if err != nil {
+					log.Printf("find tag error: %v", err)
+					c.String(http.StatusInternalServerError, "数据库内部错误")
+					return
+				}
+				r.Groups = append(r.Groups, api.SummaryGroupByTagID{
+					TagID:  k,
+					Tag:    t,
+					Amount: int(item.Amount),
+				})
+			}
+		}
+		sort.Slice(r.Groups, func(i int, j int) bool {
+			return r.Groups[i].TagID < r.Groups[j].TagID
+		})
+
+		c.JSON(200, r)
+	}
 }
 
 func (ctrl *ItemController) RegisterRoutes(rg *gin.RouterGroup) {
