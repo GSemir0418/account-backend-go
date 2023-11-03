@@ -252,10 +252,10 @@ func TestSummary(t *testing.T) {
 	ic.RegisterRoutes(r.Group("/api"))
 
 	qs := url.Values{
-		// "happened_after":  []string{"2023-09-01T00:00:00+08:00"},
-		// "happened_before": []string{"2023-10-31T00:00:00+08:00"},
-		"kind":     []string{"xxx"},
-		"group_by": []string{"happened_at"},
+		"happened_after":  []string{"2023-09-01T00:00:00+08:00"},
+		"happened_before": []string{"2023-09-03T00:00:00+08:00"},
+		"kind":            []string{"expenses"},
+		"group_by":        []string{"happened_at"},
 	}.Encode()
 
 	w := httptest.NewRecorder()
@@ -269,7 +269,7 @@ func TestSummary(t *testing.T) {
 	logIn(t, u.ID, req)
 
 	for i := 0; i < 3; i++ {
-		d, _ := datetime.Parse("2023-10-01T00:00:00+08:00", time.Local)
+		d, _ := datetime.Parse("2023-09-01T00:00:00+08:00", time.Local)
 		if _, err := q.CreateItem(c, queries.CreateItemParams{
 			UserID:     u.ID,
 			Amount:     10000,
@@ -280,16 +280,28 @@ func TestSummary(t *testing.T) {
 			t.Error(err)
 		}
 	}
-
+	for i := 0; i < 3; i++ {
+		d, _ := datetime.Parse("2023-09-02T00:00:00+08:00", time.Local)
+		if _, err := q.CreateItem(c, queries.CreateItemParams{
+			UserID:     u.ID,
+			Amount:     10000,
+			Kind:       "expenses",
+			TagIds:     []int32{1},
+			HappenedAt: d,
+		}); err != nil {
+			t.Error(err)
+		}
+	}
 	r.ServeHTTP(w, req)
-	assert.Equal(t, 400, w.Code)
+	assert.Equal(t, 200, w.Code)
 
-	// body := w.Body.String()
-	// var j api.ErrorResponse
-	// if err := json.Unmarshal([]byte(body), &j); err != nil {
-	// 	t.Error("json.Unmarshal fail", err)
-	// }
-	// assert.Equal(t, 3, len(j.Errors))
-	// assert.Equal(t, 10000*3, j.Income)
-	// assert.Equal(t, 0, j.Balance)
+	body := w.Body.String()
+	var j api.GetSummaryResponse
+	json.Unmarshal([]byte(body), &j)
+	assert.Equal(t, 60000, j.Total)
+	assert.Equal(t, 2, len(j.Groups))
+	assert.Equal(t, 30000, j.Groups[0].Amount)
+	// 测试排序 期待小的在前
+	assert.Equal(t, "2023-09-01", j.Groups[0].HappenedAt)
+	assert.Equal(t, "2023-09-02", j.Groups[1].HappenedAt)
 }

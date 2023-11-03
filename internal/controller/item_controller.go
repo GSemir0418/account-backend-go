@@ -6,6 +6,7 @@ import (
 	"account/internal/database"
 	"log"
 	"net/http"
+	"sort"
 	"strconv"
 	"time"
 
@@ -211,7 +212,49 @@ func (ctrl *ItemController) GetSummary(c *gin.Context) {
 		}
 		return
 	}
-	c.Status(200)
+	r := api.GetSummaryResponse{}
+	r.Groups = []api.SummaryGroupByHappenedAt{}
+	r.Total = 0
+
+	me, _ := c.Get("me")
+	user, _ := me.(queries.User)
+
+	q := database.NewQuery()
+	items, err := q.ListItemsByHappenedAtAndKind(c, queries.ListItemsByHappenedAtAndKindParams{
+		HappenedAfter:  query.HappenedAfter,
+		HappenedBefore: query.HappenedBefore,
+		Kind:           query.Kind,
+		UserID:         user.ID,
+	})
+	if err != nil {
+		log.Printf("list items error: %v", err)
+		c.String(http.StatusInternalServerError, "数据库内部错误")
+		return
+	}
+	// 按 happened_at 进行分组
+	for _, item := range items {
+		k := item.HappenedAt.Format("2006-01-02") // 相当于 yyyy-MM-dd
+		r.Total += int(item.Amount)
+		found := false
+		for index, group := range r.Groups {
+			if group.HappenedAt == k {
+				found = true
+				r.Groups[index].Amount += int(item.Amount)
+			}
+		}
+		if !found {
+			r.Groups = append(r.Groups, api.SummaryGroupByHappenedAt{
+				HappenedAt: k,
+				Amount:     int(item.Amount),
+			})
+		}
+	}
+	// 对 group 按 happened_at 从前到后进行排序
+	sort.Slice(r.Groups, func(i int, j int) bool {
+		return r.Groups[i].HappenedAt < r.Groups[j].HappenedAt
+	})
+
+	c.JSON(200, r)
 }
 
 func (ctrl *ItemController) RegisterRoutes(rg *gin.RouterGroup) {

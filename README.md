@@ -628,3 +628,14 @@ type ErrorResponse struct {
     happened_at: ["required"]
   }
 }
+后续可以将这个错误处理改为中间件
+
+添加sql语句而不是在原来的或者别人的sql语句基础上改
+
+测试要测试到边界条件
+
+分组就是for循环套for循环（还有没有更好的？）
+includes 的替代就是 for循环 + flag
+
+数据排序，其中 i,j 为索引
+sort.Slice(r.Groups, func(i int, j int) bool {})

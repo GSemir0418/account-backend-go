@@ -30,3 +30,11 @@ DELETE FROM items;
 SELECT * from items
 WHERE happened_at >= sqlc.arg(happened_after) AND happened_at < sqlc.arg(happened_before)
 ORDER BY happened_at DESC;
+
+-- name: ListItemsByHappenedAtAndKind :many
+SELECT * from items
+WHERE happened_at >= @happened_after
+AND happened_at < @happened_before
+AND kind = @kind
+AND user_id = @user_id
+ORDER BY happened_at DESC;
