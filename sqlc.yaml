@@ -11,11 +11,11 @@ sql:
         out: "config/sqlc"
         overrides:
         - db_type: "pg_catalog.timestamp"
+          nullable: true
           go_type:
             import: "time"
             type: "Time"
             pointer: true
-          nullable: true
         - db_type: "pg_catalog.varchar"
           nullable: true
           go_type:

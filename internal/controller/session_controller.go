@@ -70,7 +70,6 @@ func (ctrl *SessionController) Create(c *gin.Context) {
 		UserID: user.ID,
 	}
 	c.JSON(200, res)
-
 }
 
 func (ctrl *SessionController) Get(c *gin.Context) {

@@ -43,11 +43,14 @@ func getMe(c *gin.Context) (queries.User, error) {
 	if len(auth) < 8 {
 		return user, fmt.Errorf("JWT为空")
 	}
+	// 截取 Bearer 后的字符
 	jwtString := auth[7:]
 	t, err := jwt_helper.ParseJWT(jwtString)
 	if err != nil {
 		return user, fmt.Errorf("无效的jwt")
 	}
+	// 当你通过指针调用一个方法时，Go 会自动对指针进行解引用，然后调用相应的方法
+	// 所以这里可以通过指针直接调用 Claims 方法，获取 jwt 声明内容
 	claims, ok := t.Claims.(jwt.MapClaims)
 	if !ok {
 		return user, fmt.Errorf("无效的jwt")

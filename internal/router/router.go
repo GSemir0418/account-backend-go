@@ -1,9 +1,7 @@
 package router
 
 import (
-	viper_config "account/config"
 	"account/internal/controller"
-	"account/internal/database"
 	"account/internal/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -26,10 +24,6 @@ func loadControllers() []controller.Controller {
 }
 
 func New() *gin.Engine {
-	// 读取 viper 配置
-	viper_config.LoadViperConfig()
-	// 连接数据库
-	database.Connect()
 	// 创建路由
 	// r := gin.Default()
 	gin.SetMode(gin.ReleaseMode)

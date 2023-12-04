@@ -22,11 +22,16 @@ func TestTagCreate(t *testing.T) {
 	tc := TagController{}
 	tc.RegisterRoutes(r.Group("/api"))
 	w := httptest.NewRecorder()
-	reqBody := gin.H{
-		"name": "test",
-		"kind": "in_come",
-		"sign": "😈",
+	reqBody := api.CreateTagRequest{
+		Name: "test",
+		Kind: "in_come",
+		Sign: "😈",
 	}
+	// reqBody := gin.H{
+	// 	"name": "test",
+	// 	"kind": "in_come",
+	// 	"sign": "😈",
+	// }
 	bytes, _ := json.Marshal(reqBody)
 	req, _ := http.NewRequest(
 		"POST",

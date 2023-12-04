@@ -3,9 +3,7 @@ package controller
 import (
 	"account/api"
 	queries "account/config/sqlc"
-	"account/internal/jwt_helper"
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -48,15 +46,6 @@ func TestItemControllerWithUser(t *testing.T) {
 	ic.RegisterRoutes(r.Group("/api"))
 	w := httptest.NewRecorder()
 
-	u, err := q.CreateUser(c, "1@qq.com")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	auth, err := jwt_helper.GenerateJWT(int(u.ID))
-	if err != nil {
-		log.Fatalln(err)
-	}
-
 	reqBody := gin.H{
 		"amount":      100,
 		"kind":        "in_come",
@@ -81,18 +70,13 @@ func TestItemControllerWithUser(t *testing.T) {
 	// 	}`),
 	// )
 
-	req.Header = http.Header{
-		"Authorization": []string{"Bearer " + auth},
-	}
+	u, _ := q.CreateUser(c, "1@qq.com")
+	logIn(t, u.ID, req)
 
 	r.ServeHTTP(w, req)
 	assert.Equal(t, 200, w.Code)
-	var resBody struct {
-		Resource queries.Item
-	}
-	if err := json.Unmarshal(w.Body.Bytes(), &resBody); err != nil {
-		t.Error("json.Unmarshal fail", err)
-	}
+	var resBody api.CreateItemResponse
+	json.Unmarshal(w.Body.Bytes(), &resBody)
 	assert.Equal(t, u.ID, resBody.Resource.UserID)
 }
 
